@@ -5,7 +5,7 @@ setOldClass("DNAbin")
 setClass("polentaDNA",
          representation = list(
            msa = "DNAbin",
-           column_score = )
+           scores = "matrix")
 )
 
 

@@ -1,4 +1,4 @@
-Package: rpg
+Package: polenta
 Title: Multiple Sequence Alignment with PASTA and GUIDANCE
 Version: 0.0.0.9000
 Authors: c(
@@ -12,11 +12,52 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports:
+ adephylo,
  ape,
+ cowplot,
  doSNOW,
  foreach,
+ ggplot2,
+ igraph,
  ips,
+ methods,
  pbmcapply,
- Rcpp (>= 0.12.9)
+ phangorn,
+ phytools,
+ plyr,
+ Rcpp (>= 0.12.9),
+ scales,
+ stringr,
+ useful,
+ zoo
 LinkingTo: Rcpp
 RoxygenNote: 6.0.1
+Collate: 
+    'BPtree_from_MSA.R'
+    'DEV-mafft.R'
+    'HoT.R'
+    'HoT_in_GUIDANCE2.R'
+    'RcppExports.R'
+    'alignSubtree.R'
+    'cAAbin.R'
+    'centroidDecomposition.R'
+    'clustalo.R'
+    'clustalw2.R'
+    'co_optimalMSAs.R'
+    'compareMSAs.R'
+    'decomposePhyloRooted.R'
+    'equalSubtrees.R'
+    'guidance.R'
+    'guidance2.R'
+    'guidanceSA.R'
+    'hello.R'
+    'merge.R'
+    'msaBP.R'
+    'muscle.R'
+    'pasta.R'
+    'phy_partitions.R'
+    'polentaDNA-class.R'
+    'polentaDNA.R'
+    'residue_score_heatmap.R'
+    'revers_Xbin.R'
+    'spanningTree.R'
