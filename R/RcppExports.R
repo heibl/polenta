@@ -5,3 +5,19 @@ rcpp_hello <- function() {
     .Call('polenta_rcpp_hello', PACKAGE = 'polenta')
 }
 
+Cmatrix <- function(msa) {
+    .Call('polenta_Cmatrix', PACKAGE = 'polenta', msa)
+}
+
+nChoosek <- function(n, k) {
+    .Call('polenta_nChoosek', PACKAGE = 'polenta', n, k)
+}
+
+which_true <- function(x) {
+    .Call('polenta_which_true', PACKAGE = 'polenta', x)
+}
+
+add_msa <- function(ref, com) {
+    .Call('polenta_add_msa', PACKAGE = 'polenta', ref, com)
+}
+
