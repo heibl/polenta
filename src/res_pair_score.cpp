@@ -18,6 +18,7 @@ NumericMatrix Cmatrix(NumericMatrix msa){
   int n_row = msa.nrow();
   int n_col = msa.ncol();
   NumericMatrix msa_recode(n_row, n_col);
+  Rcout << "initializing done"<< endl;
 
   for(int col=0; col<=n_col; col++){
     int lastnongap = -1;
@@ -30,14 +31,15 @@ NumericMatrix Cmatrix(NumericMatrix msa){
         msa_recode(row,col) = (2*count)+1;
         lastnongap = (2*count)+1;
         count++;
+        Rcout << count << endl;
       }
     }
   }
   msa_recode = transpose(msa_recode);
   // this is experimental: R quits unexpectedly, could have to do with memory issues
   // this might be a way to fix it
-  Rcpp::Environment G = Rcpp::Environment::global_env();
-  Rcpp::Function gc = G["gc"];
+  // Rcpp::Environment G = Rcpp::Environment::global_env();
+  // Rcpp::Function gc = G["gc"];
   return (msa_recode);
 }
 //[[Rcpp::export]]
@@ -72,8 +74,10 @@ NumericMatrix add_msa(NumericMatrix ref, NumericMatrix com){
   int ref_n_row = ref.nrow();
   int ref_n_col = ref.ncol();
   int rpsc_n_row = nChoosek(ref_n_row,2);
-  NumericMatrix rpsc(rpsc_n_row*ref_n_col,4);
+  NumericMatrix rpsc(rpsc_n_row*ref_n_col,5);
   NumericVector ref_rp;
+
+  Rcout << "intitializing done"<< endl;
 
   int count = 0;
   for(int col=0; col <= ref_n_col-1; col++){
@@ -85,7 +89,7 @@ NumericMatrix add_msa(NumericMatrix ref, NumericMatrix com){
         // reference residue pair
         int ref_rp1 = ref(row1, col);
         int ref_rp2 = ref(row2, col);
-        // Rcout << "1:" << ref_rp1 << " and " << ref_rp2 << std::endl;
+        // Rcout << "1: residue nr1 " << ref_rp1 << " and residue number2 " << ref_rp2 << std::endl;
         // if gap => NA
         if(ref_rp1%2 == 0 || ref_rp2%2 == 0){
 
@@ -93,21 +97,21 @@ NumericMatrix add_msa(NumericMatrix ref, NumericMatrix com){
           rpsc(count,1) = row1;
           rpsc(count,2) = row2;
           rpsc(count,3) = NA_REAL;
-          // rpsc(count,4) = count;
+          rpsc(count,4) = count;
 
         }else{ //no gap
           // if the two aligned residues from the REF
           // are aligned in one column in the ALT => 1, else 0
           int upbase = which_true(com(row1,_) == ref_rp1);
           int downbase = which_true(com(row2,_) == ref_rp2);
-          // Rcout << "2: " << upbase << " and " << upbase<< std::endl;
+          // Rcout << "2: base 1 " << upbase << " and base 2 " << upbase<< std::endl;
 
           if(upbase == downbase){
             rpsc(count,0) = col;
             rpsc(count,1) = row1;
             rpsc(count,2) = row2;
             rpsc(count,3) = 1;
-            // rpsc(count,4) = count;
+            rpsc(count,4) = count;
           }else{
             rpsc(count,0) = col;
             rpsc(count,1) = row1;
@@ -115,12 +119,14 @@ NumericMatrix add_msa(NumericMatrix ref, NumericMatrix com){
             rpsc(count,3) = NA_REAL;
             // rpsc(count,4) = 0;}
 
-        }
+          }
+        } // row2
         count++;
-      } // row2
-    } // row1
-  } // col
+        Rcout << count << endl;
+      } // row1
+    } // col
 
-  //   colnames(rps) =  c("col", "row1", "row2", "score")
- return(rpsc);
+    //   colnames(rps) =  c("col", "row1", "row2", "score")
+  }
+  return(rpsc);
 }
