@@ -18,7 +18,7 @@ NumericMatrix Cmatrix(NumericMatrix msa){
   int n_row = msa.nrow();
   int n_col = msa.ncol();
   NumericMatrix msa_recode(n_row, n_col);
-  Rcout << "initializing done"<< endl;
+  // Rcout << "initializing done"<< endl;
 
   for(int col=0; col<=n_col; col++){
     int lastnongap = -1;
@@ -31,7 +31,7 @@ NumericMatrix Cmatrix(NumericMatrix msa){
         msa_recode(row,col) = (2*count)+1;
         lastnongap = (2*count)+1;
         count++;
-        Rcout << count << endl;
+        // Rcout << count << endl;
       }
     }
   }
@@ -77,7 +77,7 @@ NumericMatrix add_msa(NumericMatrix ref, NumericMatrix com){
   NumericMatrix rpsc(rpsc_n_row*ref_n_col,5);
   NumericVector ref_rp;
 
-  Rcout << "intitializing done"<< endl;
+  // Rcout << "intitializing done"<< endl;
 
   int count = 0;
   for(int col=0; col <= ref_n_col-1; col++){
@@ -93,11 +93,11 @@ NumericMatrix add_msa(NumericMatrix ref, NumericMatrix com){
         // if gap => NA
         if(ref_rp1%2 == 0 || ref_rp2%2 == 0){
 
-          rpsc(count,0) = col;
-          rpsc(count,1) = row1;
-          rpsc(count,2) = row2;
+          rpsc(count,0) = col+1;
+          rpsc(count,1) = row1+1;
+          rpsc(count,2) = row2+1;
           rpsc(count,3) = NA_REAL;
-          rpsc(count,4) = count;
+          rpsc(count,4) = count+1;
 
         }else{ //no gap
           // if the two aligned residues from the REF
@@ -107,26 +107,25 @@ NumericMatrix add_msa(NumericMatrix ref, NumericMatrix com){
           // Rcout << "2: base 1 " << upbase << " and base 2 " << upbase<< std::endl;
 
           if(upbase == downbase){
-            rpsc(count,0) = col;
-            rpsc(count,1) = row1;
-            rpsc(count,2) = row2;
+            rpsc(count,0) = col+1;
+            rpsc(count,1) = row1+1;
+            rpsc(count,2) = row2+1;
             rpsc(count,3) = 1;
-            rpsc(count,4) = count;
+            rpsc(count,4) = count+1;
           }else{
-            rpsc(count,0) = col;
-            rpsc(count,1) = row1;
-            rpsc(count,2) = row2;
-            rpsc(count,3) = NA_REAL;
-            // rpsc(count,4) = 0;}
-
+            rpsc(count,0) = col+1;
+            rpsc(count,1) = row1+1;
+            rpsc(count,2) = row2+1;
+            rpsc(count,3) = 0;
+            rpsc(count,4) = count+1;
           }
         } // row2
         count++;
-        Rcout << count << endl;
+        // Rcout << count << endl;
       } // row1
     } // col
 
     //   colnames(rps) =  c("col", "row1", "row2", "score")
   }
-  return(rpsc);
+    return(rpsc);
 }

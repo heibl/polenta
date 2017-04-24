@@ -63,4 +63,5 @@ Collate:
     'polentaDNA.R'
     'residue_score_heatmap.R'
     'revers_Xbin.R'
+    'scores.R'
     'spanningTree.R'
