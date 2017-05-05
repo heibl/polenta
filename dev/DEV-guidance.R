@@ -7,12 +7,12 @@ library("parallel")
 library("doSNOW")
 library("pbmcapply")
 
-library(rpg)
+library(polenta)
 
 # 1.	Read sequences
 ms <- read.fas("dev/data/cortinarius_28s_ms.fas")
 set.seed(100)
-seqs <- sample(ms, 10) ## choose 10 sequences
+sequences <- sample(ms, 10) ## choose 10 sequences
 
 ncore = 24
 bootstrap = 100
