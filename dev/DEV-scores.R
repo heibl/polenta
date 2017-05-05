@@ -1,3 +1,8 @@
+load("dev/scores.rda")
+names(scores)
+
+
+
 head(scores$column_score)
 
 id <- scores$residue_pair_column_score$col %in% scores$column_score$col
@@ -15,9 +20,9 @@ head(rprs)
 ## residue_pair_residue_score as matrix
 rprs <- scores$residue_pair_residue_score
 m <- matrix(rprs$score, nrow = nrow(base.msa))
-# ID <- which(m < 1.0, arr.ind = TRUE)
-# cs[55, ]
-# rpcs[55, ]
+identical(dim(base.msa), dim(m)) # alignment and rprs matrix have same dimensions
+
+x <- polentaDNA(base.msa, m)
 
 ## calculate residue_pair_column_score from m
 rpcs <- colMeans(m, na.rm = TRUE)

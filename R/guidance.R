@@ -327,7 +327,7 @@ guidance <- function(sequences,
   # ## GUIDANCE Score
   #----------------------------------------------
   ## Create temporary dir for alternative MSAs
-  dir.create(paste(tempdir(), "alt", sep="/"))
+  dir.create(paste(tempdir(), "alt", sep = "/"))
   files_from <- list.files(tempdir(), full.names = TRUE)
   files_from <- files_from[grep("\\.fas", files_from)]
   files_to <- list.files(tempdir())
@@ -340,16 +340,16 @@ guidance <- function(sequences,
   ## Run msa_set_score
   #---------------------
   scores <- compareMSAs(ref = base.msa,
-    dir_path = paste(tempdir(), "alt", sep ="/"),
-    com = NULL)
+                        dir_path = paste(tempdir(), "alt", sep = "/"),
+                        com = NULL)
 
   ##  if wanted, store alternative MSAs into a zip file
   if (!missing(alt.msas.file)){
-    files <- list.files(paste(tempdir(), "alt", sep="/"))
+    files <- list.files(paste(tempdir(), "alt", sep = "/"))
     files <- files[grep("HoT", files)]
-    for(i in 1:(n.coopt*bootstrap)){
-      file.rename(paste(tempdir(), files[i], sep="/"),
-        paste(tempdir(), paste("altMSA", i, ".fas",sep=""), sep="/"))}
+    for (i in 1:(n.coopt*bootstrap)){
+      file.rename(paste(tempdir(), files[i], sep = "/"),
+        paste(tempdir(), paste0("altMSA", i, ".fas"), sep = "/"))}
     files <- list.files(tempdir(), full.names = TRUE)
     files <- files[grep("altMSA*", files)]
     zip(zipfile = alt.msas.file, files = files)
@@ -365,58 +365,61 @@ guidance <- function(sequences,
   unlink(files, force = TRUE, recursive = TRUE)
 
   ## Reduce MSA according to cutoffs, it wanted
-  #---------------------------------------------
-  msa <- guidance.msa <- base.msa
-  msa <- as.character(msa)
-  ## masking residues below cutoff
-  if (mask.cutoff > 0){
-    txt <- as.vector(as.character(base.msa))
-    # mat <- data.frame(rpr.sc, txt)
-    mat <- data.frame(scores$residue_pair_residue_score, txt)
-    rown <- max(mat$residue)
-    coln <- max(mat$col)
-    res_mat <- matrix(mat$score, nrow = rown, ncol = coln)
+  ## WILL BE TRASFERRED TO METHOD FOR polentaDNA class
+  #---------------------------------------------------
+  # msa <- guidance.msa <- base.msa
+  # msa <- as.character(msa)
+  # ## masking residues below cutoff
+  # if (mask.cutoff > 0){
+  #   txt <- as.vector(as.character(base.msa))
+  #   # mat <- data.frame(rpr.sc, txt)
+  #   mat <- data.frame(scores$residue_pair_residue_score, txt)
+  #   rown <- max(mat$residue)
+  #   coln <- max(mat$col)
+  #   res_mat <- matrix(mat$score, nrow = rown, ncol = coln)
+  #
+  #   if (mask.cutoff == "auto"){ mask.cutoff <- 0.50 }
+  #
+  #   if (inherits(sequences, "DNAbin")){
+  #     msa[res_mat<mask.cutoff & !is.na(res_mat)] <- "N"
+  #     msa <- as.DNAbin(msa)
+  #   }
+  #   if (inherits(sequences, "AAbin")) {
+  #     msa[res_mat<mask.cutoff & !is.na(res_mat)] <- "X"
+  #     rownames(msa) <- labels(sequences)
+  #     class(msa) <- "AAbin"
+  #   }
+  #   guidance.msa <- msa
+  # }
+  # ## remove unreliable columns
+  # if (col.cutoff > 0){
+  #   if (mask.cutoff) {
+  #     msa <- guidance.msa
+  #   } else {
+  #     msa <- base.msa
+  #     }
+  #   if (col.cutoff == "auto"){ col.cutoff <- 0.97 }
+  #   # remove_cols <- g.cs$res_pair_col_score < col.cutoff
+  #   remove_cols <- scores$column_score$CS < col.cutoff
+  #   guidance.msa <- msa[, !remove_cols]
+  # }
+  # ## remove unreliable sequences
+  # if (seq.cutoff > 0){
+  #   if (mask.cutoff) { msa <- guidance.msa
+  #   } else { msa <- base.msa }
+  #   if (seq.cutoff =="auto"){seq.cutoff <- 0.5}
+  #   # remove_sequences <- rps.sc$res_pair_seq_score < seq.cutoff
+  #   remove_sequences <- scores$residual_pair_sequence_score$score < seq.cutoff
+  #   guidance.msa <- msa[!remove_sequences,]
+  # }
+  #
+  # ## Generate output
+  # res <- list(scores = scores,
+  #   GUIDANCE_msa = guidance.msa,
+  #   base_msa = base.msa)
 
-    if (mask.cutoff == "auto"){ mask.cutoff <- 0.50 }
-
-    if (inherits(sequences, "DNAbin")){
-      msa[res_mat<mask.cutoff & !is.na(res_mat)] <- "N"
-      msa <- as.DNAbin(msa)
-    }
-    if (inherits(sequences, "AAbin")) {
-      msa[res_mat<mask.cutoff & !is.na(res_mat)] <- "X"
-      rownames(msa) <- labels(sequences)
-      class(msa) <- "AAbin"
-    }
-    guidance.msa <- msa
-  }
-  ## remove unreliable columns
-  if (col.cutoff > 0){
-    if (mask.cutoff) {
-      msa <- guidance.msa
-    } else {
-      msa <- base.msa
-      }
-    if (col.cutoff == "auto"){ col.cutoff <- 0.97 }
-    # remove_cols <- g.cs$res_pair_col_score < col.cutoff
-    remove_cols <- scores$column_score$CS < col.cutoff
-    guidance.msa <- msa[, !remove_cols]
-  }
-  ## remove unreliable sequences
-  if (seq.cutoff > 0){
-    if (mask.cutoff) { msa <- guidance.msa
-    } else { msa <- base.msa }
-    if (seq.cutoff =="auto"){seq.cutoff <- 0.5}
-    # remove_sequences <- rps.sc$res_pair_seq_score < seq.cutoff
-    remove_sequences <- scores$residual_pair_sequence_score$score < seq.cutoff
-    guidance.msa <- msa[!remove_sequences,]
-  }
-
-  ## Generate output
-  res <- list(scores = scores,
-    GUIDANCE_msa = guidance.msa,
-    base_msa = base.msa)
-
-  ## Return output
-  return(res)
+  ## Prepare and return output
+  ## -------------------------
+  m <- matrix(scores$residue_pair_residue_score$score, nrow = nrow(base.msa))
+  polentaDNA(base.msa, m, "guidance")
 }

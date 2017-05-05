@@ -7,7 +7,7 @@ library("parallel")
 library("doSNOW")
 library("pbmcapply")
 
-library(pasta)
+library(polenta)
 
 # 1.	Read sequences
 ms <- read.fas("dev/data/cortinarius_28s_ms.fas")
