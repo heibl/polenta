@@ -44,6 +44,7 @@ Collate:
     'centroidDecomposition.R'
     'clustalo.R'
     'clustalw2.R'
+    'cmatrix.R'
     'co_optimalMSAs.R'
     'compareMSAs.R'
     'decomposePhyloRooted.R'
