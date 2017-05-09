@@ -4,7 +4,7 @@ library("parallel")
 library("doSNOW")
 library("pbmcapply")
 
-library(rpg)
+library(polenta)
 
 # 1.	Read sequences
 seqs <- read.fas("dev/data/cortinarius_28s_ms.fas")

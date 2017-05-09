@@ -248,21 +248,21 @@ guidance <- function(sequences,
     registerDoSNOW(cl)
 
     if (msa.program == "mafft"){
-      foreach(i = 1:bootstrap, .packages=c('ips', 'ape'),
+      foreach(i = 1:bootstrap, .packages = c('ips', 'ape'),
         .options.snow = opts)  %dopar% {
           mafft(x = sequences, gt = nj.guide.trees[[i]],
             exec = exec, file = msa_out[i], method = method)
         }
     }
     if (msa.program == "muscle"){
-      foreach(i = 1:bootstrap, .packages=c('ips', 'ape'),
+      foreach(i = 1:bootstrap, .packages = c('ips', 'ape'),
         .options.snow = opts)  %dopar% {
           muscle2(x = sequences, gt = nj.guide.trees[[i]],
             exec = exec, file = msa_out[i])
         }
     }
     if (msa.program == "clustalo"){
-      foreach(i = 1:bootstrap, .packages =c('ips', 'ape'),
+      foreach(i = 1:bootstrap, .packages = c('ips', 'ape'),
         .options.snow = opts)  %dopar% {
           clustalo(x = sequences, gt = nj.guide.trees[[i]],
             exec = exec, file = msa_out[i])
@@ -270,7 +270,7 @@ guidance <- function(sequences,
         }
     }
     if (msa.program == "clustalw2"){
-      foreach(i = 1:bootstrap, .packages=c('ips', 'ape'),
+      foreach(i = 1:bootstrap, .packages = c('ips', 'ape'),
         .options.snow = opts)  %dopar% {
           clustalw2(x = sequences, gt = nj.guide.trees[[i]],
             exec = exec, file = msa_out[i])
@@ -281,28 +281,28 @@ guidance <- function(sequences,
 
   if (!parallel){
     if (msa.program == "mafft"){
-      foreach(i = 1:bootstrap, .packages=c('ips', 'ape'))  %do% {
+      foreach(i = 1:bootstrap, .packages = c('ips', 'ape'))  %do% {
         setTxtProgressBar(pb, i)
         mafft2(x = sequences, gt = nj.guide.trees[[i]],
           method = method, exec = exec, file = msa_out[i])
       }
     }
     if (msa.program == "muscle"){
-      foreach(i = 1:bootstrap, .packages=c('ips', 'ape'))  %do% {
+      foreach(i = 1:bootstrap, .packages = c('ips', 'ape'))  %do% {
         setTxtProgressBar(pb, i)
         muscle2(x = sequences, gt = nj.guide.trees[[i]],
           exec = exec, file = msa_out[i])
       }
     }
     if (msa.program == "clustalo"){
-      foreach(i = 1:bootstrap, .packages =c('ips', 'ape'))  %do% {
+      foreach(i = 1:bootstrap, .packages = c('ips', 'ape'))  %do% {
         setTxtProgressBar(pb, i)
         clustalo(x = sequences, gt = nj.guide.trees[[i]],
           exec = exec, file = msa_out[i])
       }
     }
     if (msa.program == "clustalw2"){
-      foreach(i = 1:bootstrap, .packages=c('ips', 'ape'))  %do% {
+      foreach(i = 1:bootstrap, .packages = c('ips', 'ape'))  %do% {
         setTxtProgressBar(pb, i)
         clustalw2(x = sequences, gt = nj.guide.trees[[i]],
           exec = exec, file = msa_out[i])
