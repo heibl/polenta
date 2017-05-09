@@ -68,12 +68,12 @@ int which_true(LogicalVector x) {
   return out;
 }
 // [[Rcpp::export]]
-NumericMatrix add_msa(NumericMatrix ref, NumericMatrix com){
+NumericVector add_msa(NumericMatrix ref, NumericMatrix com){
 
   int nr = ref.nrow();
   int nc = ref.ncol();
   int rpsc_n_row = nChoosek(nr,2);
-  NumericMatrix rpsc(rpsc_n_row*nc,4);
+  NumericVector rpsc(rpsc_n_row*nc);
 
   // Rcout << "intitializing done"<< endl;
 
@@ -90,12 +90,12 @@ NumericMatrix add_msa(NumericMatrix ref, NumericMatrix com){
         // Rcout << "1: residue nr1 " << ref_rp1 << " and residue number2 " << ref_rp2 << std::endl;
         // if gap => NA
 
-        rpsc(count,0) = col+1;
-        rpsc(count,1) = row1+1;
-        rpsc(count,2) = row2+1;
+        // rpsc(count,0) = col+1;
+        // rpsc(count,1) = row1+1;
+        // rpsc(count,2) = row2+1;
 
         if(ref_rp1%2 == 0 || ref_rp2%2 == 0){
-          rpsc(count,3) = NA_REAL;
+          rpsc(count) = NA_REAL;
           // rpsc(count,4) = count+1;
 
         }else{ //no gap
@@ -106,10 +106,10 @@ NumericMatrix add_msa(NumericMatrix ref, NumericMatrix com){
           // Rcout << "2: base 1 " << upbase << " and base 2 " << upbase<< std::endl;
 
           if(upbase == downbase){
-            rpsc(count,3) = 1;
+            rpsc(count) = 1;
             // rpsc(count,4) = count+1;
           }else{
-            rpsc(count,3) = 0;
+            rpsc(count) = 0;
             // rpsc(count,4) = count+1;
           }
         } // row2

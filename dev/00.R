@@ -13,15 +13,15 @@ library("zoo")
 library(cowplot)
 # 1.	Read example sequences
 ## DNA
-seq_dna <- read.fas("dev/data/cortinarius_28s_ms.fas", type ="DNA")
+seq_dna <- read.fas("dev/data/cortinarius_28s_ms.fas")
 set.seed(100)
 seq_dna <- sample(seq_dna,10)
 ## Amino Acids
-seq_aa <- read.fas("dev/data/AATF.fas", type ="AA")
+seq_aa <- read.fas("dev/data/AATF.fas")
 
 
 # msa.program <- "mafft"
-# exec <- "/usr/local/bin/mafft"
+exec <- "/usr/local/bin/mafft"
 # msa.program <- "clustalo"
 # exec <- "/Applications/clustalo"
 # msa.program <- "clustalw2"
