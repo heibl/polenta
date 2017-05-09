@@ -1,5 +1,5 @@
-## This code is part of the rpg package
-## © C. Heibl 2016 (last update 2017-04-12)
+## This code is part of the polenta package
+## © C. Heibl 2016 (last update 2017-05-09)
 
 #' @title Ultra-Large Multiple Sequence Alignment with PASTA
 #' @description Provides a complete reimplementation of the PASTA algorithm (Mirarab, Nguyen, and Warnow 2014) in R.
@@ -60,13 +60,13 @@ pasta <- function(seqs, gt, k = 200, cutoff = 0.93, parallel = FALSE,
                bootstrap = bootstrap, msa.program = msa.program,
                method = method, exec = exec)
     }
-    s <- lapply(subtrees, foo, seqs = seqs)
-    names(s) <- names(subtrees)
-    seqs <- lapply(s, function(z) z$base_msa)
+    seqs <- lapply(subtrees, foo, seqs = seqs)
+    names(seqs) <- names(subtrees)
 
     ## compute spanning tree of subsets
     ## --------------------------------
     st <- spanningTree(gt, subtrees)
+    save.image("devworkspace.rda")
 
     ## do profile-alignment
     ## --------------------
@@ -74,14 +74,20 @@ pasta <- function(seqs, gt, k = 200, cutoff = 0.93, parallel = FALSE,
     merger <- function(seqlist, index, exec){
       mafft.merge(seqlist[index], exec = exec)
     }
-    seqs <- apply(e, 1, merger, seqlist = seqs, exec = exec)
-    names(seqs) <- paste(e[, 1], e[, 2], sep = "-")
+    seqlist <- extractMSA(seqs)
+    seqlist <- apply(e, 1, merger, seqlist = seqlist, exec = exec)
+    names(seqlist) <- paste(e[, 1], e[, 2], sep = "-")
 
-    save.image("devworkspace.rda")
+    ## reappend scores to merged alignments
+    ## ------------------------------------
+    seqs <- apply(e, 1, reappendScores, merged = seqlist, scored = seqs)
+    names(seqs) <- paste(e[, 1], e[, 2], sep = "-")
 
     ## do transitivity merging
     ## -----------------------
     load("devworkspace.rda")
+
+    save.image("devworkspace.rda")
 
 
   }

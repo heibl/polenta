@@ -2,6 +2,7 @@
 ## © C. Heibl 2017 (last update 2017-05-05)
 
 #' @include polentaDNA-class.R
+#' @seealso \code{\link{extractMSA}}
 #' @importFrom methods new
 #' @export
 
@@ -16,7 +17,7 @@
 
 ## setMethod: indexing, extracting scores,
 
-setMethod("show", "polentaDNA",
+setMethod("show", signature = "polentaDNA",
           function(object){
             cat(nrow(object@msa), "DNA sequences with", object@method, "scores")
           })
