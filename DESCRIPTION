@@ -63,3 +63,4 @@ Collate:
     'residue_score_heatmap.R'
     'revers_Xbin.R'
     'spanningTree.R'
+    'transitivityMerge.R'

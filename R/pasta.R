@@ -1,5 +1,5 @@
 ## This code is part of the polenta package
-## © C. Heibl 2016 (last update 2017-05-09)
+## © C. Heibl 2016 (last update 2017-05-10)
 
 #' @title Ultra-Large Multiple Sequence Alignment with PASTA
 #' @description Provides a complete reimplementation of the PASTA algorithm (Mirarab, Nguyen, and Warnow 2014) in R.
@@ -86,6 +86,8 @@ pasta <- function(seqs, gt, k = 200, cutoff = 0.93, parallel = FALSE,
     ## do transitivity merging
     ## -----------------------
     load("devworkspace.rda")
+    id <- 4:5
+    obj <- seqs
 
     save.image("devworkspace.rda")
 
