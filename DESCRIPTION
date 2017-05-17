@@ -68,3 +68,4 @@ Collate:
     'revers_Xbin.R'
     'scores.R'
     'spanningTree.R'
+    'transitivityMerge.R'

@@ -1,5 +1,5 @@
 ## This code is part of the polenta package
-## © C. Heibl 2016 (last update 2017-05-09)
+## © C. Heibl 2016 (last update 2017-05-17)
 
 #' @title Ultra-Large Multiple Sequence Alignment with PASTA
 #' @description Provides a complete reimplementation of the PASTA algorithm (Mirarab, Nguyen, and Warnow 2014) in R.
@@ -11,7 +11,7 @@
 #' @importFrom ips mafft mafft.merge
 #' @export
 
-pasta <- function(seqs, gt, k = 200, cutoff = 0.93, parallel = FALSE,
+polenta <- function(seqs, gt, k = 200, cutoff = 0.93, parallel = FALSE,
                   bootstrap = 100, msa.program = "mafft", method = "auto",
                   exec, ncore){
 
@@ -86,6 +86,34 @@ pasta <- function(seqs, gt, k = 200, cutoff = 0.93, parallel = FALSE,
     ## do transitivity merging
     ## -----------------------
     load("devworkspace.rda")
+
+    ## calculate pairings for transitivity merging
+    ## this is probably quite inefficient
+
+    vertex.set <- strsplit(names(seqs), "-")
+    pairings <- function(z){
+      obj <- list(); meta <- list()
+      for (i in 1:(length(z) - 1)){
+        zz <- sapply(z, intersect, x = z[[i]])
+        zz <- sapply(zz, length)
+        p <- which(zz > 0)
+        p <- p[p > i][1]
+        if (is.na(p)) next
+        p <- c(i, p)
+        meta <- c(meta, list(sort(unique(unlist(z[p])))))
+        obj <- c(obj, list(p))
+      }
+      attr(obj, "vertices") <- meta
+      obj
+    }
+    while (length(seqs) > 1){
+      p <- pairings(vertex.set)
+      seqs <- lapply(p, transitivityMerge, x = seqs)
+      vertex.set <- attr(p, "vertices")
+    }
+    seqs <- seqs[[1]]
+
+
 
     save.image("devworkspace.rda")
 

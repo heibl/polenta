@@ -34,7 +34,11 @@ export(reappendScores)
 export(rev_DNA)
 export(scores)
 export(spanningTree)
+<<<<<<< HEAD
 import(Rcpp)
+=======
+export(transitivityMerge)
+>>>>>>> devel
 import(adephylo)
 import(ape)
 import(doSNOW)
@@ -49,8 +53,14 @@ import(scales)
 import(stringr)
 import(useful)
 import(zoo)
+<<<<<<< HEAD
 importFrom(Rcpp,sourceCpp)
+=======
+importFrom(ape,as.DNAbin)
+importFrom(ape,cbind.DNAbin)
+>>>>>>> devel
 importFrom(ape,drop.tip)
+importFrom(ape,rbind.DNAbin)
 importFrom(cowplot,plot_grid)
 importFrom(igraph,"vertex_attr<-")
 importFrom(igraph,add_edges)
