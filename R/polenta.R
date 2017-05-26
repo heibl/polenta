@@ -88,7 +88,7 @@ polenta <- function(seqs, gt, k = 200, cutoff = 0.93, parallel = FALSE,
     load("devworkspace.rda")
 
     ## calculate pairings for transitivity merging
-    ## this is probably quite inefficient
+    ## this is probably very inefficient
 
     vertex.set <- strsplit(names(seqs), "-")
     pairings <- function(z){
@@ -112,6 +112,12 @@ polenta <- function(seqs, gt, k = 200, cutoff = 0.93, parallel = FALSE,
       vertex.set <- attr(p, "vertices")
     }
     seqs <- seqs[[1]]
+
+    ## next steps
+    ## - put pairing() in its on file
+    ## - testing
+    ## - parallelisation
+    ## - make pairing more efficient
 
 
 
