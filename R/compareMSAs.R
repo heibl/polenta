@@ -1,3 +1,6 @@
+## This code is part of the polenta package
+## © F.-S. Krah, C. Heibl 2017 (last update 2017-05-26)
+
 #' Compare reference MSAs with alternative MSAs
 #'
 #' @description MSA reliability scores (Penn et al. 2010)
@@ -51,30 +54,29 @@ compareMSAs <- function(ref, com, dir_path){
 
   # create temporary dir with temporary fasta files
   fns <- vector(length = 2)
-  rn <- format(runif(1,1,100000), digits = 0, scientific = FALSE)
+  rn <- format(runif(1, 1, 100000), digits = 0, scientific = FALSE)
   for (i in seq_along(fns))
-    fns[i] <- tempfile(pattern = paste("run", rn, sep="")
-      , tmpdir = tempdir(), fileext = ".fas")
+    fns[i] <- tempfile(pattern = paste0("run", rn), tmpdir = tempdir(), fileext = ".fas")
   unlink(fns[file.exists(fns)])
+  
+  ## Where is the executable? This will be obsolete when our own 
+  ## C code will be called.
+  exec <- "/Users/heibl/Documents/r/pkgs/polenta/src/msa_set_score_src/msa_set_score"
 
-  if(is.null(com)){
+  if (is.null(com)){
 
-    if(!dir.exists(dir_path))
-      stop("Dir not found")
+    if (!dir.exists(dir_path))
+      stop("directory not found")
 
     write.fas(ref, fns[1])
-    system(paste("src/msa_set_score_src/msa_set_score",
-      fns[1],
-      paste(tempdir(), "GUIDANCE", sep ="/"),
-      "-d",
-      dir_path), intern = TRUE, ignore.stdout = FALSE)
+    system(paste(exec, fns[1], paste0(tempdir(), "/GUIDANCE"), "-d", dir_path), 
+           intern = TRUE, ignore.stdout = FALSE)
 
     ## read program putput which is in temp dir
     files <-  list.files(tempdir(), full.names = TRUE)
     read <- files[grep("GUIDANCE", files)]
 
-
-  }else{
+  } else {
 
     if (!inherits(com, c("AAbin", "DNAbin")))
       stop("ref not of class AAbin or DNAbin")
@@ -87,14 +89,10 @@ compareMSAs <- function(ref, com, dir_path){
     write.fas(com, file = fns[2])
 
     ## call program msa_set_score in R package folder src/msa_set_score_src
-    system(paste(paste("src/msa_set_score_src/msa_set_score", sep ="/"),
-      fns[1],
-      paste(tempdir(), rn, sep ="/"),
-      "-m",
-      fns[2]), intern = FALSE, ignore.stdout = TRUE)
+    system(paste(exec, fns[1], paste(tempdir(), rn, sep = "/"), "-m", fns[2]), 
+           intern = FALSE, ignore.stdout = TRUE)
 
-
-    ## read program putput which is in temp dir
+    ## read program output which is in temp dir
     files <-  list.files(tempdir(), full.names = TRUE)
     files <- files[grep(rn, files)]
     read <- files[-grep("\\.fas", files)]
@@ -112,8 +110,8 @@ compareMSAs <- function(ref, com, dir_path){
   msc <- unlist(msc)
   msc <- data.frame(do.call(cbind, strsplit(msc, " ")))
   msc[] <- lapply(msc, as.character)
-  names(msc) <- c(msc[1,1], msc[1,2])
-  msc <- msc[-1,]
+  names(msc) <- c(msc[1, 1], msc[1, 2])
+  msc <- msc[-1, ]
 
 
   # Residue pair column score (GUIDANCE Score)

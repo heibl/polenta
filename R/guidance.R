@@ -222,7 +222,7 @@ guidance <- function(sequences,
       stopCluster(cl)
     }
     if (!parallel){
-      nj.guide.trees <- foreach(i = 1:bootstrap, .packages = "phangorn") %do%{
+      nj.guide.trees <- foreach(i = 1:bootstrap, .packages = "phangorn") %do% {
         setTxtProgressBar(pb, i)
         msaBP_nj_tree(base.msa, outgroup = "auto")
       }

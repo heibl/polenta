@@ -1,5 +1,5 @@
 ## This code is part of the polenta package
-## © C. Heibl 2016 (last update 2017-05-17)
+## © C. Heibl 2016 (last update 2017-05-28)
 
 
 #' @title Transitivity Merge
@@ -12,8 +12,15 @@
 
 transitivityMerge <- function(x, id = c(1, 2)){
 
-  msa1 <- x[[id[1]]]@msa
-  msa2 <- x[[id[2]]]@msa
+  include_scores <- inherits(x[[1]], "polentaDNA")
+  
+  if (include_scores){
+    msa1 <- x[[id[1]]]@msa
+    msa2 <- x[[id[2]]]@msa
+  } else {
+    msa1 <- x[[id[1]]]
+    msa2 <- x[[id[2]]]
+  }
 
   ## shared species
   shared <- intersect(rownames(msa1), rownames(msa2))
@@ -53,17 +60,22 @@ transitivityMerge <- function(x, id = c(1, 2)){
 
   ## Insert gaps into sequence and score matrices
   ## --------------------------------------------
-  scores1 <- x[[id[1]]]@scores
-  scores2 <- x[[id[2]]]@scores
+  if (include_scores){
+    scores1 <- x[[id[1]]]@scores
+    scores2 <- x[[id[2]]]@scores
+  }
+  
   for (i in 1:length(insert1)){
     where <- insert1[[i]][1]
     what <- insert1[[i]][2]
     msa1 <- cbind(msa1[, 0:(where - 1)],
                   as.DNAbin(matrix("-", nrow = nrow(msa1), ncol = what, dimnames = list(rownames(msa1), NULL))),
                   msa1[, where:ncol(msa1)])
-    scores1 <- cbind(scores1[, 0:(where - 1)],
-                     matrix(NaN, nrow = nrow(scores1), ncol = what, dimnames = list(rownames(scores1), NULL)),
-                     scores1[, where:ncol(scores1)])
+    if (include_scores){
+      scores1 <- cbind(scores1[, 0:(where - 1)],
+                       matrix(NaN, nrow = nrow(scores1), ncol = what, dimnames = list(rownames(scores1), NULL)),
+                       scores1[, where:ncol(scores1)])
+    }
   }
   for (i in 1:length(insert2)){
     where <- insert2[[i]][1]
@@ -71,9 +83,11 @@ transitivityMerge <- function(x, id = c(1, 2)){
     msa2 <- cbind(msa2[, 0:(where - 1)],
                   as.DNAbin(matrix("-", nrow = nrow(msa2), ncol = what, dimnames = list(rownames(msa2), NULL))),
                   msa2[, where:ncol(msa2)])
-    scores2 <- cbind(scores2[, 0:(where - 1)],
-                     matrix(NaN, nrow = nrow(scores2), ncol = what, dimnames = list(rownames(scores2), NULL)),
-                     scores2[, where:ncol(scores2)])
+    if (include_scores){
+      scores2 <- cbind(scores2[, 0:(where - 1)],
+                       matrix(NaN, nrow = nrow(scores2), ncol = what, dimnames = list(rownames(scores2), NULL)),
+                       scores2[, where:ncol(scores2)])
+    }
   }
 
   ## add trailing gaps
@@ -82,25 +96,35 @@ transitivityMerge <- function(x, id = c(1, 2)){
     d <- ncol(msa2) - ncol(msa1)
     msa1 <- cbind(msa1,
                   as.DNAbin(matrix("-", nrow = nrow(msa1), ncol = what, dimnames = list(rownames(msa1), NULL))))
-    scores1 <- cbind(scores1,
-                     matrix(NaN, nrow = nrow(scores1), ncol = what, dimnames = list(rownames(scores1), NULL)))
+    if (include_scores){
+      scores1 <- cbind(scores1,
+                       matrix(NaN, nrow = nrow(scores1), ncol = what, dimnames = list(rownames(scores1), NULL)))
+    }
   }
   if (ncol(msa1) > ncol(msa2)){
     d <- ncol(msa1) - ncol(msa2)
     msa2 <- cbind(msa2,
                   as.DNAbin(matrix("-", nrow = nrow(msa2), ncol = what, dimnames = list(rownames(msa2), NULL))))
-    scores2 <- cbind(scores2,
-                     matrix(NaN, nrow = nrow(scores2), ncol = what, dimnames = list(rownames(scores2), NULL)))
+    if (include_scores){
+      scores2 <- cbind(scores2,
+                       matrix(NaN, nrow = nrow(scores2), ncol = what, dimnames = list(rownames(scores2), NULL)))
+    }
   }
 
-
-  ## remove one set of shared species ...
+  ## Remove one set of shared species and join bot sets
+  ## --------------------------------------------------
   msa1 <- msa1[!rownames(msa1) %in% shared, ]
-  scores1 <- scores1[!rownames(scores1) %in% shared, ]
-  ## ... and join bot sets
-  msa <- rbind(msa1, msa2)
-  scores <- rbind(scores1, scores2)
-  polentaDNA(msa = rbind(msa1, msa2),
-             scores = rbind(scores1, scores2),
-             method = x[[id[1]]]@method)
+  if (include_scores){
+    scores1 <- scores1[!rownames(scores1) %in% shared, ]
+  }
+  
+  ## Create output object
+  ## --------------------
+  if (include_scores){
+    polentaDNA(msa = rbind(msa1, msa2),
+               scores = rbind(scores1, scores2),
+               method = x[[id[1]]]@method)
+  } else {
+    rbind(msa1, msa2)
+  }
 }

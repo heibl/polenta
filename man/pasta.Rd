@@ -4,8 +4,8 @@
 \alias{pasta}
 \title{Ultra-Large Multiple Sequence Alignment with PASTA}
 \usage{
-pasta(seqs, gt, k = 200, cutoff = 0.93, parallel = FALSE,
-  bootstrap = 100, msa.program = "mafft", method = "auto", exec, ncore)
+pasta(seqs, gt, k = 200, msa.program = "mafft", method = "localpair",
+  exec, parallel = FALSE, ncore)
 }
 \arguments{
 \item{seqs}{An object of class \code{\link{DNAbin}} or \code{\link{AAbin}}
@@ -14,7 +14,33 @@ containing unaligned sequences of DNA or amino acids.}
 \item{gt}{\emph{Currently unused.}}
 
 \item{k}{An integer giving the size of cluster in which the dataset is split.}
+
+\item{msa.program}{A character string giving the alignment program to use;
+currently only \code{"mafft"} is possible.}
+
+\item{method}{A character string choosing a method of the alignment program;
+default is \code{"localpair"}, see \code{\link{mafft}} for possible
+options.}
+
+\item{exec}{A character string giving the path to the alignment program
+executable.}
+
+\item{parallel}{Logical, indicating if the function should be run in parallel
+or serial mode. \emph{Currently unused!}}
+
+\item{ncore}{An integer giving the number of cores to use in parallel mode.
+\emph{Currently unused!}}
+
+\item{bootstrap}{An integer giving the number of bootstrap replicates.}
+}
+\value{
+An object of class \code{\link{polentaDNA}}.
 }
 \description{
-Provides a complete reimplementation of the PASTA algorithm (Mirarab, Nguyen, and Warnow 2014) in R.
+Provides a complete reimplementation of the PASTA algorithm
+  (Mirarab, Nguyen, and Warnow 2014) in R.
+}
+\seealso{
+\code{\link{extractMSA}} for extractiong the multiple sequence
+  alignment of an \code{polentaDNA} object.
 }

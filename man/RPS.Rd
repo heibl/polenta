@@ -2,7 +2,7 @@
 % Please edit documentation in R/RPS.R
 \name{RPS}
 \alias{RPS}
-\title{computes residue pair score scores by comparing a reference MSA with alternative MSAs}
+\title{Computes residue pair score scores by comparing a two MSAs}
 \usage{
 RPS(ref, alt)
 }
@@ -11,8 +11,14 @@ RPS(ref, alt)
 
 \item{alt}{either single or many alternative MSA(s). If single class \code{matrix}, if multiple class \code{list}. Must be object of \code{\link{gbbin.matrix}} or \code{\link{gbbin.list}}}
 }
+\value{
+residue_pair_score if one alternative MSA is supplied then this is 1
+  if a residue pair was identically aligned as in the reference MSA and 0
+  otherwise. If more than one, then the average of the residue pair scores
+  that result from each comparison with the reference MSA.
+}
 \description{
-computes residue pair score scores by comparing a reference MSA with alternative MSAs
+Computes residue pair score scores by comparing a two MSAs
 }
 \author{
 Franz-Sebastian Krah
