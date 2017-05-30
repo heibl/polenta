@@ -15,7 +15,7 @@ cmatrix <- function(msa){
   stop("msa is not of class 'DNAbin' or 'AAbin'")
 
   msa <-  gbbin(as.character(msa))
+  rownames(msa) <- NULL
   msa <- Cmatrix(msa)
-  apply(msa, 2, as.integer)
   return(msa)
 }

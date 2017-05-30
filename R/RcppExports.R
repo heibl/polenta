@@ -13,7 +13,15 @@ which_true <- function(x) {
     .Call('polenta_which_true', PACKAGE = 'polenta', x)
 }
 
-add_msa <- function(ref, com) {
-    .Call('polenta_add_msa', PACKAGE = 'polenta', ref, com)
+which_true2 <- function(x) {
+    .Call('polenta_which_true2', PACKAGE = 'polenta', x)
+}
+
+add_msa_score <- function(ref, com) {
+    .Call('polenta_add_msa_score', PACKAGE = 'polenta', ref, com)
+}
+
+rps_mat_maker <- function(nr, nc) {
+    .Call('polenta_rps_mat_maker', PACKAGE = 'polenta', nr, nc)
 }
 

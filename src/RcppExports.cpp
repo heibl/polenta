@@ -39,15 +39,38 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// add_msa
-NumericMatrix add_msa(NumericMatrix ref, NumericMatrix com);
-RcppExport SEXP polenta_add_msa(SEXP refSEXP, SEXP comSEXP) {
+// which_true2
+int which_true2(LogicalVector x);
+RcppExport SEXP polenta_which_true2(SEXP xSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< LogicalVector >::type x(xSEXP);
+    rcpp_result_gen = Rcpp::wrap(which_true2(x));
+    return rcpp_result_gen;
+END_RCPP
+}
+// add_msa_score
+NumericVector add_msa_score(NumericMatrix ref, NumericMatrix com);
+RcppExport SEXP polenta_add_msa_score(SEXP refSEXP, SEXP comSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type ref(refSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type com(comSEXP);
-    rcpp_result_gen = Rcpp::wrap(add_msa(ref, com));
+    rcpp_result_gen = Rcpp::wrap(add_msa_score(ref, com));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rps_mat_maker
+NumericMatrix rps_mat_maker(int nr, int nc);
+RcppExport SEXP polenta_rps_mat_maker(SEXP nrSEXP, SEXP ncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type nr(nrSEXP);
+    Rcpp::traits::input_parameter< int >::type nc(ncSEXP);
+    rcpp_result_gen = Rcpp::wrap(rps_mat_maker(nr, nc));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -21,6 +21,7 @@
 #'   \code{"auto"} (0.5)
 #' @param mask.cutoff specific residues below a certain cutoff are masked ('N'
 #'   for DNA, 'X' for AA); either user supplied or \code{"auto"} (0.5)
+#' @param nj.program specify if R functions or SEMPHY should be used for guide-tree estimation
 #' @return list containing following scores and alignments:
 #' @return mean_scores residue pair score and mean column score
 #' @return column_score
@@ -103,7 +104,8 @@ guidance <- function(sequences,
   mask.cutoff = "auto",
   parallel = FALSE, ncore ="auto",
   method = "auto",
-  alt.msas.file){
+  alt.msas.file,
+  nj.program){
 
   ##############################################
   ## SOME CHECKS
@@ -118,7 +120,8 @@ guidance <- function(sequences,
 
   ## Check for MSA program
   if (missing(exec)){
-    os <- Sys.info()$sysname
+    os <- Sys.info()
+    os <- os[grep("sysname", names(os))]
     if (msa.program == "mafft") {
       exec <- switch(os, Linux = "mafft", Darwin = "mafft",
         Windows = "mafft.bat")
@@ -178,8 +181,8 @@ guidance <- function(sequences,
   #--------------------------------------------------------
   cat("Generating NJ guide trees \n")
   ## Compute NJ guide trees
-  semphy <- FALSE
-  if (semphy){
+
+  if (nj.program =="semphy"){
     #### SEMPHY  ###
     if(nrow(base.msa) > 150){
       if (type == "DNA")
@@ -203,10 +206,9 @@ guidance <- function(sequences,
     nj.guide.trees <- lapply(nj.guide.trees, compute.brlen)
   }
 
-  Rnj <- TRUE
   pb <- txtProgressBar(max = bootstrap, style = 3)
 
-  if (Rnj){
+  if (nj.program == "R"){
     if (parallel){
       progress <- function(n) setTxtProgressBar(pb, n)
       opts <- list(progress = progress)
