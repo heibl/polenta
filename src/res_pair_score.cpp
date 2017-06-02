@@ -56,7 +56,7 @@ int nChoosek( int n, int k )
   return result;
 }
 // [[Rcpp::export]]
-int which_true(LogicalVector x) {
+int which_true2(LogicalVector x) {
   int counter = 0;
   int out;
   for(int i = 0; i < x.size(); i++) {
@@ -68,17 +68,17 @@ int which_true(LogicalVector x) {
   return out;
 }
 
-// [[Rcpp::export]]
-int which_true2(LogicalVector x) {
-  int counter = 0;
-  while (x[counter] != TRUE) {
-    counter++ ;
-    if(x[counter] == TRUE){
-      break;
-    }
-  }
-  return (counter+1);
-}
+// // [[Rcpp::export]]
+// int which_true2(LogicalVector x) {
+//   int counter = 0;
+//   while (x[counter] != TRUE) {
+//     counter++ ;
+//     if(x[counter] == TRUE){
+//       break;
+//     }
+//   }
+//   return (counter+1);
+// }
 // This matrix version is very slow // [[Rcpp::export]]
 // NumericMatrix add_msa(NumericMatrix ref, NumericMatrix com){
 //
@@ -198,4 +198,15 @@ NumericMatrix rps_mat_maker(int nr, int nc){
     } // col
   }
   return(rpsc);
+}
+// [[Rcpp::export]]
+int which_true(NumericVector x, int y) {
+  int counter = 0;
+  while (x[counter] != y) {
+    counter++ ;
+    if(x[counter] == y){
+      break;
+    }
+  }
+  return (counter+1);
 }
