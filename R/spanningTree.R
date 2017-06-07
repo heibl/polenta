@@ -1,7 +1,7 @@
 ## This code is part of the rpg package
-## © C. Heibl 2017 (last update 2017-04-12)
+## © C. Heibl 2017 (last update 2017-06-07)
 
-#' @title Minimum-Spanning-Tree for PASTA
+#' @title Spanning Tree for PASTA
 #' @description Creates miminum spanning tree connecting subsets obtained by
 #'   centroid decomposition.
 #' @param phy An object of class \code{\link{phylo}} containing a complete
@@ -47,39 +47,38 @@ spanningTree <- function(phy, subtrees){
   phy$edge <- matrix(c(phy$tip.label, phy$node.label)[phy$edge], ncol = 2)
   phy <- graph_from_edgelist(phy$edge, directed = FALSE)
   repeat {
+    
+    ## Choose one node (int) and identify one of its neighbors (n).
+    ## n will be deleted and 
+    ## ----------------------------------------------------------
     vertex_names <- vertex_attr(phy)$name
-    int <- sample(grep("Node", vertex_names), 1)
-    n <- vertex_names[neighbors(phy, int)]
-    id <- grep("Node", n)
-    if (length(id)) n <- n[-id]
-    if (!length(n)) next
-    if (length(n)) n <- sample(n, 1)
-    deg <- degree(phy, n)
-    ## handle nodes of degree 1
-    if (deg == 1){
+    int <- sample(grep("Node", vertex_names), 1) ## choose a random internal node
+    n <- vertex_names[neighbors(phy, int)] ## get neighbors of this node
+    id <- grep("Node", n) ## IDs of internal neighbors
+    if (length(id)) n <- n[-id] ## consider only terminal neighbors
+    if (!length(n)) next ## if no terminalnal neighbors, jump to next
+    if (length(n)) n <- n[1] ## if there more terminal nodes, use the first
+    
+    ## Handle nodes of degree 1
+    if (degree(phy, n) == 1){
       phy <- delete.vertices(phy, n)
       vertex_attr(phy)$name[match(vertex_names[int], vertex_attr(phy)$name)] <- n
+      
+    ## handle nodes of higher degree
     } else {
         nn <- vertex_attr(phy)$name[neighbors(phy, n)]
         phy <- delete.vertices(phy, n)
         ## if more than two neighbors exist, we have to
         ## construct corrrect node vector
         if (length(nn) > 2){
-          s <- grep("S", nn)
-          if (length(nn) - length(s) > 1){
-            stop("implement me!")
-          } else {
-            ns <- vector()
-            for (i in s) ns <- c(ns, nn[-s], nn[i])
-          }
-          nn <- ns
+            ns <- rep(vertex_names[int], (length(nn) - 1) * 2)
+            ns[c(FALSE, TRUE)] <- nn[nn != vertex_names[int]]
+            nn <- ns
         }
         phy <- add_edges(phy, nn)
         vertex_attr(phy)$name[match(vertex_names[int], vertex_attr(phy)$name)] <- n
     }
     ## stopping conditition
-    vertex_names <- vertex_attr(phy)$name
-    int <- grep("Node", vertex_names)
     if (!length(grep("Node", vertex_attr(phy)$name))) break
   }
   phy

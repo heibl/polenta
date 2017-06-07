@@ -1,5 +1,5 @@
 ## This code is part of the polenta package
-## © C. Heibl 2016 (last update 2017-05-28)
+## © C. Heibl 2016 (last update 2017-06-07)
 
 #' @title Ultra-Large Multiple Sequence Alignment with PASTA
 #' @description Provides a complete reimplementation of the PASTA algorithm
@@ -109,6 +109,7 @@ pasta <- function(seqs, gt, k = 200,
     ## -----------------------
     cat("Transitivity merging\n")
     # load("devworkspace.rda")
+    # seqs <- lapply(seqs, extractMSA)
 
     ## calculate pairings for transitivity merging
     ## this is probably very inefficient
@@ -129,12 +130,25 @@ pasta <- function(seqs, gt, k = 200,
       attr(obj, "vertices") <- meta
       obj
     }
+    
+    cl <- makeCluster(ncore)
+    registerDoSNOW(cl)
     while (length(seqs) > 1){
       p <- pairings(vertex.set)
-      seqs <- lapply(p, transitivityMerge, x = seqs)
+      # seqs <- lapply(p, transitivityMerge, x = seqs)
+      seqs <- foreach(i = 1:length(p),
+                      .packages = c('ips', 'ape'),
+                      .options.snow = opts)  %dopar% {
+                        transitivityMerge(x = seqs, id = p[[i]])
+                      }
       vertex.set <- attr(p, "vertices")
     }
+    stopCluster(cl)
     seqs <- seqs[[1]]
+    
+    
+    
+    
 
     ## next steps
     ## - put pairing() in its on file
@@ -142,7 +156,7 @@ pasta <- function(seqs, gt, k = 200,
     ## - parallelisation
     ## - make pairing more efficient
 
-    # save.image("devworkspace.rda")
+    # save(seqs, file = "devworkspace.rda")
 
   }
   seqs
