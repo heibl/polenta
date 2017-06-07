@@ -46,6 +46,7 @@ Collate:
     'cmatrix.R'
     'co_optimalMSAs.R'
     'compareMSAs.R'
+    'compareMSAs_src.R'
     'decomposePhyloRooted.R'
     'equalSubtrees.R'
     'extractMSA.R'

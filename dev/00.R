@@ -29,15 +29,13 @@ exec <- "/usr/local/bin/mafft"
 # msa.program <- "muscle"
 # exec <- "/Applications/muscle"
 
-system.time(g_r <- guidance(sequences = seq_aa,
+system.time(g_r <- guidance(sequences = seq_dna,
   msa.program = "mafft",
   # exec = exec,
   bootstrap = 100,
-  col.cutoff = "auto",
-  seq.cutoff = "auto",
-  mask.cutoff = "auto",
   parallel = TRUE, ncore = "auto",
-  method = "retree 1"))
+  method = "retree 1",
+  nj.program = "R"))
 
 system.time(
   g_sa <- guidanceSA(sequences = seq_dna,

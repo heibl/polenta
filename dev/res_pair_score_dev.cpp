@@ -68,7 +68,7 @@ int which_true(LogicalVector x) {
   return out;
 }
 // [[Rcpp::export]]
-NumericVector add_msa(NumericMatrix ref, NumericMatrix com){
+NumericVector add_msa2(NumericMatrix ref, NumericMatrix com){
 
   int nr = ref.nrow();
   int nc = ref.ncol();

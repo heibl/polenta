@@ -6,7 +6,8 @@
 \usage{
 guidance(sequences, msa.program = "mafft", exec, bootstrap = 100,
   col.cutoff = "auto", seq.cutoff = "auto", mask.cutoff = "auto",
-  parallel = FALSE, ncore = "auto", method = "auto", alt.msas.file)
+  parallel = FALSE, ncore = "auto", method = "auto", alt.msas.file,
+  nj.program)
 }
 \arguments{
 \item{sequences}{An object of class \code{\link{DNAbin}} or
@@ -37,6 +38,8 @@ for DNA, 'X' for AA); either user supplied or \code{"auto"} (0.5)}
 \item{ncore}{number of cores (default is maxinum of local threads)}
 
 \item{method}{further arguments passed to mafft, default is \code{"auto"}}
+
+\item{nj.program}{specify if R functions or SEMPHY should be used for guide-tree estimation}
 }
 \value{
 list containing following scores and alignments:

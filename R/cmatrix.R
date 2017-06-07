@@ -14,8 +14,6 @@ cmatrix <- function(msa){
   if(!inherits(msa, c("DNAbin", "AAbin")))
   stop("msa is not of class 'DNAbin' or 'AAbin'")
 
-  msa <-  gbbin(as.character(msa))
-  msa <- Cmatrix(msa)
-  apply(msa, 2, as.integer)
+  msa <- Cmatrix(gbbin(as.character(msa)))
   return(msa)
 }

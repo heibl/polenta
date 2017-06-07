@@ -1,7 +1,0 @@
-This sucks, however,
-these currently have to be manually added to NAMESPACE:
-
-export(Cmatrix)
-export(nChoosek)
-export(which_true)
-export(add_msa)

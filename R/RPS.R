@@ -22,12 +22,14 @@ RPS <- function(ref, alt){
   }
 
   # test if same sequences
+  ### THIS IS TOO SLOW FOR MORE MSAs
   if(inherits(alt, "list")){
   if(any(!unlist(lapply(alt, function(x)
     valid_alignments(as.character(ref), as.character(x))))))
     stop("the alignments do not share the same sequences")
   }else{
-    valid_alignments(as.character(ref), as.character(alt))
+    if(!valid_alignments(as.character(ref), as.character(alt)))
+      stop("the alignments do not share the same sequences")
   }
 
 
@@ -40,19 +42,25 @@ RPS <- function(ref, alt){
     alt <- lapply(alt, cmatrix)
     # print("cmat ok")
 
-    res <- add_msa(ref = ref, com = alt[[1]])
+    res <- add_msa_score(ref = ref, com = alt[[1]])
     for(i in 2:length(alt)){
-      res[,4] <- res[,4] + add_msa(ref = ref, com = alt[[i]])[,4]
+      res <- res + add_msa_score(ref = ref, com = alt[[i]])
     }
     # print("add_msa ok")
   }else{
     alt <- cmatrix(alt)
-    res <- add_msa(ref = ref, com = alt)
+    res <- add_msa_score(ref = ref, com = alt)
     # print("cmat ok")
     # print("add_msa ok")
   }
   if(inherits(alt, "list"))
-    res[,4] <- res[,4]/length(alt)
+    res <- res/length(alt)
+
+  cat("calc score done")
+  ## Create rest of mat specifying col, row1, row2
+
+  mat <- rps_mat_maker(nc = ncol(ref), nr = nrow(ref))
+  res <- cbind(mat, res)
 
   colnames(res) <- c("col", "row1", "row2", "score")
   return(res)
