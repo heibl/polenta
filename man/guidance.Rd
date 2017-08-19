@@ -4,10 +4,10 @@
 \alias{guidance}
 \title{GUIDetree-based AligNment ConficencE}
 \usage{
-guidance(sequences, msa.program = "mafft", exec, bootstrap = 100,
-  col.cutoff = "auto", seq.cutoff = "auto", mask.cutoff = "auto",
-  parallel = FALSE, ncore = "auto", method = "auto", alt.msas.file,
-  nj.program)
+guidance(sequences, msa.program = "mafft", msa.exec, bootstrap = 100,
+  parallel = FALSE, ncore = "auto", method = "auto", int_file = FALSE,
+  alt.msas.file, nj.program = "R", score_method = "Rcpp",
+  msa_set_score.exec)
 }
 \arguments{
 \item{sequences}{An object of class \code{\link{DNAbin}} or
@@ -17,21 +17,7 @@ guidance(sequences, msa.program = "mafft", exec, bootstrap = 100,
 currelty one of c("mafft", "muscle", "clustalo", "clustalw2"); MAFFT is
 default}
 
-\item{exec}{A character string giving the path to the executable of the
-alignment program.}
-
 \item{bootstrap}{An integer giving the number of perturbated MSAs.}
-
-\item{col.cutoff}{numberic between 0 and 1; specifies a cutoff to remove
-unreliable columns below the cutoff; either user supplied or \code{"auto"}
-(0.73)}
-
-\item{seq.cutoff}{numberic between 0 and 1; specifies a cutoff to remove
-unreliable sequences below the cutoff; either user supplied of
-\code{"auto"} (0.5)}
-
-\item{mask.cutoff}{specific residues below a certain cutoff are masked ('N'
-for DNA, 'X' for AA); either user supplied or \code{"auto"} (0.5)}
 
 \item{parallel}{logical, if TRUE, specify the number of cores}
 
@@ -40,28 +26,9 @@ for DNA, 'X' for AA); either user supplied or \code{"auto"} (0.5)}
 \item{method}{further arguments passed to mafft, default is \code{"auto"}}
 
 \item{nj.program}{specify if R functions or SEMPHY should be used for guide-tree estimation}
-}
-\value{
-list containing following scores and alignments:
 
-mean_scores residue pair score and mean column score
-
-column_score
-
-residue_column_score GUIDANCE score
-
-residue_pair_residue_score
-
-residual_pair_sequence_pair_score
-
-residual_pair_sequence_score
-
-residue_pair_score
-
-base_msa
-
-guidance_msa is the base_MSA removed from unreliable
-  residues/columns/sequences below cutoffs
+\item{exec}{A character string giving the path to the executable of the
+alignment program.}
 }
 \description{
 MSA reliability assessment GUIDANCE (Penn et al. 2010)
@@ -125,6 +92,4 @@ G. Landan and D. Graur (2008). Local reliability measures from
 }
 \author{
 Franz-Sebastian Krah
-
-Christoph Heibl
 }

@@ -1,12 +1,13 @@
 ## This code is part of the ips package
-## © C. Heibl 2014 (last update 2017-03-22)
+## © C. Heibl 2014 (last update 2017-04-06)
 
 #' @title Sequence Alignment with MAFFT
 #' @description This function is a wrapper for MAFFT and can be used for
 #'   (profile) aligning of DNA and aminoacis sequences.
 #' @param x An object of class \code{DNAbin} or \code{AAbin}.
-#' @param y An object of class \code{DNAbin} or \code{AAbin}, if given both \code{x} and
-#'   \code{y} are preserved and aligned to each other ("profile alignment").
+#' @param y An object of class \code{DNAbin} or \code{AAbin}, if given both
+#'   \code{x} and \code{y} are preserved and aligned to each other ("profile
+#'   alignment").
 #' @param add A character string giving the method used for adding \code{y} to
 #'   \code{x}: \code{"add"}, \code{"addprofile"} (default), or any unambiguous
 #'   abbreviation of these.
@@ -36,8 +37,10 @@
 #'   including its name, e.g. something like \code{/user/local/bin/mafft} under
 #'   UNIX-alikes.
 #' @param quiet Logical, if set to \code{TRUE}, mafft progress is printed out on
-#' @param type character, DNA or AA
 #'   the screen.
+#' @param file A character string indicating the filename of the output FASTA
+#'   file; if this is missing the the alignment will be returned as  matrix of
+#'   class \code{DNAbin} or \code{AAbin}.
 #' @details \code{"localpair"} selects the \bold{L-INS-i} algorithm, probably
 #'   most accurate; recommended for <200 sequences; iterative refinement method
 #'   incorporating local pairwise alignment information.
@@ -79,7 +82,7 @@
 #' @importFrom phangorn write.phyDat
 #' @export
 
-mafft2 <- function(x, y, add, method = "auto", maxiterate = 0,
+mafft <- function(x, y, add, method = "auto", maxiterate = 0,
   op = 1.53, ep = 0.0, gt, options,
   thread = -1, exec, quiet, file){
 
@@ -161,21 +164,10 @@ mafft2 <- function(x, y, add, method = "auto", maxiterate = 0,
   ## ---------------------
   if (os == "unix"){
     system(call.mafft, intern = FALSE, ignore.stdout = FALSE)
-    res <- length(scan(fns[3], what = "c", quiet = TRUE))
+    res <- (file.info(fns[3])$size > 1) #allow line break in empty file
     if (res != 0) {
-      #res <- read.fas(fns[3])
-      if (inherits(x, "DNAbin")) { res <- read.fas(fns[3], type ="DNA") }
-      if (inherits(x, "AAbin" )) {
-        res <- read.fas(fns[3], type  ="AAbin")
-        #   if(!missing(y)){
-        #     nam <- c(names(x), names(y))
-        #     names(res) <- nam
-        #   }else{
-        #     names(res) <- names(x)
-        # }
-      }
+      res <- read.fas(fns[3])
     }
-
     ## execute MAFFT on WINDOWS
     ## ------------------------
   } else {
@@ -184,17 +176,13 @@ mafft2 <- function(x, y, add, method = "auto", maxiterate = 0,
       res <- 0
     }
     else {
-      if (inherits(x, "DNAbin")) {  res <- read.fas(fns[3], type ="DNA") }
-      if (inherits(x, "AAbin" )) {
-        res <- read.fas(fns[3], type  ="AA")
-        # rownames(res) <- names(seq)
-      }
+      res <-  read.fas(fns[3])
     }
   }
   unlink(fns[file.exists(fns)])
-  if(!missing(file)){
+  if (!missing(file)){
     write.fas(res, file)
-  }else{
+  } else {
     return(res)
   }
 }

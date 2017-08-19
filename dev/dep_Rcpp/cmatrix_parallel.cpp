@@ -1,4 +1,4 @@
-// trying to follow: http://gallery.rcpp.org/articles/parallel-distance-matrix/
+// examples: http://gallery.rcpp.org/articles/parallel-distance-matrix/
 // and http://gallery.rcpp.org/articles/parallel-matrix-transform/
 
 #include <Rcpp.h>

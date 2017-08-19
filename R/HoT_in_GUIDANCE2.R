@@ -6,7 +6,7 @@ Hot_GUIDANCE2 <- function(msa, n.coopt, type, td,
 
   # create start_tree
   li <- msa
-  msa <- read.fas(msa, type = type)
+  msa <- read.fas(msa)
   msa.nj <- ape::nj(dist.ml(as.phyDat(msa)))
   msa.nj <- root(msa.nj, outgroup = msa.nj$tip.label[1])
   msa.nj <- multi2di(msa.nj)

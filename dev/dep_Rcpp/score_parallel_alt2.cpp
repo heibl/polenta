@@ -1,4 +1,8 @@
-// trying to follow: http://gallery.rcpp.org/articles/parallel-distance-matrix/
+// Residue pair score function
+// Franz Krah
+// 06-24-2017
+// Status: running, bug after first iteration
+// examples: http://gallery.rcpp.org/articles/parallel-distance-matrix/
 // and http://gallery.rcpp.org/articles/parallel-matrix-transform/
 
 
@@ -23,6 +27,7 @@ struct add_msa_score : public Worker
   RMatrix<double> rpsc;
 
   // initialize with source and destination
+  // msa and ref are outputs from Cmatrix (odds are bases, evens are gaps)
   add_msa_score(const NumericMatrix msa, const NumericMatrix ref, NumericMatrix rpsc)
     : msa(msa), ref(ref), rpsc(rpsc) {}
 
@@ -30,33 +35,38 @@ struct add_msa_score : public Worker
   void operator()(std::size_t begin, std::size_t end) {
 
     // double count = 0;
-    int nr = ref.nrow();
+    double nr = ref.nrow();
     // column loop
+
+
     for(std::size_t col=begin; col < end; col++){
 
       // count of row number for res matrix
-      double count = 0;
+      RVector<int> count = 0;
 
       // first residue
       for(std::size_t row1 = 0; row1 <= nr-2; row1++){
 
         // second residue
-        double resup = row1+1;
-        for(std::size_t row2=resup; row2 <= nr-1; row2++){
+        double raise = row1+1;
+        for(std::size_t row2=raise; row2 <= nr-1; row2++){
 
           // reference residue pair
           int ref_rp1 = ref(row1, col);
           int ref_rp2 = ref(row2, col);
-          // Rcout << ref_rp1 << ref_rp2;
+
+          int oddornot1 = ref_rp1 % 2;
+          int oddornot2 = ref_rp2 % 2;
 
           // if one residue is gap (even number) => NA
-          if ( (ref_rp1 % 2 == 0) || (ref_rp2 % 2 == 0) ){
-          // if( (((ref_rp1 >1) << 1) - ref_rp1 == 0) ||  (((ref_rp2 >1) << 1) - ref_rp2 == 0) ){
+          // if ( (ref_rp1 % 2 == 0) || (ref_rp2 % 2 == 0) ){
+          double hit;
 
-            rpsc(count, col) = NA_REAL;
+          if ( oddornot1 != 1 || oddornot2 != 1 ){
+
+            hit = NA_REAL;
 
           } else { // no gap => hit or no hit
-          // if ( (ref_rp1 % 2 == 1) || (ref_rp2 % 2 == 1) ){
 
             // if the two aligned residues from the REF
             // are aligned in one column in the ALT (MSA) => 1, else 0
@@ -67,32 +77,33 @@ struct add_msa_score : public Worker
 
             // find positions of residues in the ALT MSA
             // *which* function was not recognized as function
-            int counter = 0;
-            int hit1;
-            while (r1[counter] != ref_rp1) {
-              counter++ ;
+            double hit1;
+            for(std::size_t counter = 0; counter < msa.ncol(); counter++){
               if(r1[counter] == ref_rp1){
-                hit1 = counter+1;
+                hit1 = counter;
               }
             }
-            counter = 0;
-            int hit2;
-            while (r2[counter] != ref_rp2) {
-              counter++ ;
+            // while (r1[counter] != ref_rp1) {
+            //   counter++ ;
+            // }
+            // hit1 = counter;
+            double hit2;
+            for(std::size_t counter = 0; counter < msa.ncol(); counter++){
               if(r2[counter] == ref_rp2){
-                hit2 = counter+1;
+                hit2 = counter;
               }
             }
-            counter = 0;
 
             // score
             if(hit1 == hit2){
-              rpsc(count, col) = 1;
-            }else{
-              rpsc(count, col) = 0;
+              hit = 1;
             }
-            count++;
+            if(hit1 != hit2){
+              hit = 0;
+            }
           }
+          rpsc(count, col) = hit;
+          count++;
         } // row2
       } // row1
     } // col
@@ -113,6 +124,8 @@ int nChoosek( int n, int k )
   return result;
 }
 // // [[Rcpp::export]]
+////[[Franz; 06-24-2017]] would like to use this in the main function,
+// however, this is not working; need template form?
 // int which_true(NumericVector x, int y) {
 //   int counter = 0;
 //   while (x[counter] != y) {

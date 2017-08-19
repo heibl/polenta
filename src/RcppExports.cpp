@@ -5,31 +5,9 @@
 
 using namespace Rcpp;
 
-// Cmatrix_p
-NumericMatrix Cmatrix_p(NumericMatrix mat);
-RcppExport SEXP polenta_Cmatrix_p(SEXP matSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type mat(matSEXP);
-    rcpp_result_gen = Rcpp::wrap(Cmatrix_p(mat));
-    return rcpp_result_gen;
-END_RCPP
-}
-// Cmatrix
-NumericMatrix Cmatrix(NumericMatrix msa);
-RcppExport SEXP polenta_Cmatrix(SEXP msaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type msa(msaSEXP);
-    rcpp_result_gen = Rcpp::wrap(Cmatrix(msa));
-    return rcpp_result_gen;
-END_RCPP
-}
 // nChoosek
 int nChoosek(int n, int k);
-RcppExport SEXP polenta_nChoosek(SEXP nSEXP, SEXP kSEXP) {
+RcppExport SEXP _polenta_nChoosek(SEXP nSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -39,74 +17,48 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// which_true
-int which_true(LogicalVector x);
-RcppExport SEXP polenta_which_true(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< LogicalVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(which_true(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// which_true2
-int which_true2(LogicalVector x);
-RcppExport SEXP polenta_which_true2(SEXP xSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< LogicalVector >::type x(xSEXP);
-    rcpp_result_gen = Rcpp::wrap(which_true2(x));
-    return rcpp_result_gen;
-END_RCPP
-}
-// add_msa_score
-NumericVector add_msa_score(NumericMatrix ref, NumericMatrix com);
-RcppExport SEXP polenta_add_msa_score(SEXP refSEXP, SEXP comSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type ref(refSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type com(comSEXP);
-    rcpp_result_gen = Rcpp::wrap(add_msa_score(ref, com));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rps_mat_maker
-NumericMatrix rps_mat_maker(int nr, int nc);
-RcppExport SEXP polenta_rps_mat_maker(SEXP nrSEXP, SEXP ncSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type nr(nrSEXP);
-    Rcpp::traits::input_parameter< int >::type nc(ncSEXP);
-    rcpp_result_gen = Rcpp::wrap(rps_mat_maker(nr, nc));
-    return rcpp_result_gen;
-END_RCPP
-}
-// add_msa_sc
-NumericVector add_msa_sc(NumericMatrix msa, NumericMatrix ref);
-RcppExport SEXP polenta_add_msa_sc(SEXP msaSEXP, SEXP refSEXP) {
+// msa_recode
+List msa_recode(NumericMatrix msa);
+RcppExport SEXP _polenta_msa_recode(SEXP msaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericMatrix >::type msa(msaSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type ref(refSEXP);
-    rcpp_result_gen = Rcpp::wrap(add_msa_sc(msa, ref));
+    rcpp_result_gen = Rcpp::wrap(msa_recode(msa));
+    return rcpp_result_gen;
+END_RCPP
+}
+// res_pair_hit
+NumericMatrix res_pair_hit(NumericMatrix col2res);
+RcppExport SEXP _polenta_res_pair_hit(SEXP col2resSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type col2res(col2resSEXP);
+    rcpp_result_gen = Rcpp::wrap(res_pair_hit(col2res));
+    return rcpp_result_gen;
+END_RCPP
+}
+// add_msa
+IntegerMatrix add_msa(IntegerMatrix ref_col2res, IntegerMatrix alt_col2res, IntegerMatrix alt_res2col, IntegerMatrix hit_mat);
+RcppExport SEXP _polenta_add_msa(SEXP ref_col2resSEXP, SEXP alt_col2resSEXP, SEXP alt_res2colSEXP, SEXP hit_matSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerMatrix >::type ref_col2res(ref_col2resSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type alt_col2res(alt_col2resSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type alt_res2col(alt_res2colSEXP);
+    Rcpp::traits::input_parameter< IntegerMatrix >::type hit_mat(hit_matSEXP);
+    rcpp_result_gen = Rcpp::wrap(add_msa(ref_col2res, alt_col2res, alt_res2col, hit_mat));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"polenta_Cmatrix_p", (DL_FUNC) &polenta_Cmatrix_p, 1},
-    {"polenta_Cmatrix", (DL_FUNC) &polenta_Cmatrix, 1},
-    {"polenta_nChoosek", (DL_FUNC) &polenta_nChoosek, 2},
-    {"polenta_which_true", (DL_FUNC) &polenta_which_true, 1},
-    {"polenta_which_true2", (DL_FUNC) &polenta_which_true2, 1},
-    {"polenta_add_msa_score", (DL_FUNC) &polenta_add_msa_score, 2},
-    {"polenta_rps_mat_maker", (DL_FUNC) &polenta_rps_mat_maker, 2},
-    {"polenta_add_msa_sc", (DL_FUNC) &polenta_add_msa_sc, 2},
+    {"_polenta_nChoosek", (DL_FUNC) &_polenta_nChoosek, 2},
+    {"_polenta_msa_recode", (DL_FUNC) &_polenta_msa_recode, 1},
+    {"_polenta_res_pair_hit", (DL_FUNC) &_polenta_res_pair_hit, 1},
+    {"_polenta_add_msa", (DL_FUNC) &_polenta_add_msa, 4},
     {NULL, NULL, 0}
 };
 

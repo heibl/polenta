@@ -11,7 +11,7 @@ polenta(seqs, gt, k = 200, bootstrap = 100, msa.program = "mafft",
   method = "auto", exec, parallel = FALSE, ncore)
 }
 \arguments{
-\item{seqs}{An object of class \code{\link{DNAbin}} or \code{\link{AAbin}} 
+\item{seqs}{An object of class \code{\link{DNAbin}} or \code{\link{AAbin}}
 containing unaligned sequences of DNA or amino acids.}
 
 \item{gt}{\emph{Currently unused.}}

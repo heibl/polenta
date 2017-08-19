@@ -55,18 +55,7 @@ int nChoosek( int n, int k )
   }
   return result;
 }
-// [[Rcpp::export]]
-int which_true2(LogicalVector x) {
-  int counter = 0;
-  int out;
-  for(int i = 0; i < x.size(); i++) {
-    counter++;
-    if(x[i] == TRUE) {
-      out = counter;
-    }
-  }
-  return out;
-}
+
 
 // // [[Rcpp::export]]
 // int which_true2(LogicalVector x) {
@@ -196,17 +185,17 @@ NumericMatrix rps_mat_maker(int nr, int nc){
         count++;
       } // row1
     } // col
-  }
+}
   return(rpsc);
 }
-// [[Rcpp::export]]
-int which_true(NumericVector x, int y) {
-  int counter = 0;
-  while (x[counter] != y) {
-    counter++ ;
-    if(x[counter] == y){
-      break;
-    }
-  }
-  return (counter+1);
-}
+// // [[Rcpp::export]]
+// int which_true(NumericVector x, int y) {
+//   int counter = 0;
+//   while (x[counter] != y) {
+//     counter++ ;
+//     if(x[counter] == y){
+//       break;
+//     }
+//   }
+//   return (counter+1);
+// }

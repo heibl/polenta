@@ -1,55 +1,65 @@
-Rcpp::sourceCpp("src/res_pair_score.cpp")
-Rcpp::sourceCpp("src/cmatrix_parallel.cpp")
-Rcpp::sourceCpp("src/score_parallel.cpp")
+Rcpp::sourceCpp("dev/score_calculation_DEV.cpp")
+# Rcpp::sourceCpp("dev/add_msa_par.cpp")
+Rcpp::sourceCpp("src/score_calculation.cpp")
 
-library(polenta)
+#-- needed later, not important
+gbbin <- function(msa){
+  msa <- (msa != "-")*1
+  return(msa)
+}
+
+library(ips)
+# library(polenta)
 library(ape)
-ref <- rbind(c("A", "A", "A", "G"),
-  c("C","A", "A", "G" ),
-  c("A", "-", "A", "G"))
-com <- rbind(c("A", "A", "A", "G", "-"),
-  c("C","A", "A", "G", "-"),
-  c("A", "-", "A", "-", "G"))
+ref <- rbind(spec1 = c("A", "A", "A", "G"),
+  spec2 = c("C","A", "A", "G" ),
+  spec3 = c("A", "-", "A", "G"),
+  spec4 = c("C","A", "A", "G" ))
+com <- rbind(spec1 = c("A", "A", "A", "G", "-"),
+  spec2 = c("C","A", "A", "G", "-"),
+  spec3 = c("-", "A", "A", "-", "G"),
+  spec4 = c("C","A", "A", "G", "-"))
 
-ref_big <- do.call(rbind, replicate(70, ref, simplify = FALSE))
-ref_big <- do.call(cbind, replicate(200, ref_big, simplify = FALSE))
-
-com_big <- do.call(rbind, replicate(70, com, simplify = FALSE))
-com_big <- do.call(cbind, replicate(200, com_big, simplify = FALSE))
+ref <- do.call(rbind, replicate(50, ref, simplify = FALSE))
+ref <- do.call(cbind, replicate(200, ref, simplify = FALSE))
+com <- do.call(rbind, replicate(50, com, simplify = FALSE))
+com <- do.call(cbind, replicate(200, com, simplify = FALSE))
 
 
 ## test for small
 ref <- as.DNAbin(ref)
 com <- as.DNAbin(com)
 
+# prep data
 ref <- gbbin(as.character(ref))
 com <- gbbin(as.character(com))
-ref <- Cmatrix(ref)
-com <- Cmatrix(com)
+# produce C matrix
+# ref <- Cmatrix(ref)
+# com <- Cmatrix(com)
 
-# parallel
-system.time(
-sc <- add_msa_sc(com, ref))
-# seriel
-add_msa_score(ref, com)
+cmat_ref <- msa_recode_dev(ref)
+cmat_alt <- msa_recode_dev(com)
 
+ref_col2res <- cmat_ref$col2res
+ref_col2res_odd <- ref_col2res %% 2
+alt_col2res <- cmat_alt$col2res
+alt_res2col <- cmat_alt$res2col
 
-# test for big
+hit <- res_pair_hit_dev(cmat_ref$col2res)
+# microbenchmark::microbenchmark(
+for(i in 1:1000){
+hit <- add_msa_dev(ref_col2res, alt_col2res, alt_res2col, ref_col2res_odd, hit)
+}
 
-ref_big <- as.DNAbin(ref_big)
-com_big <- as.DNAbin(com_big)
-
-ref_big <- gbbin(as.character(ref_big))
-com_big <- gbbin(as.character(com_big))
-ref_big <- Cmatrix(ref_big)
-com_big <- Cmatrix(com_big)
-
-# parallel
-system.time(
-  sc <- add_msa_sc(com_big, ref_big)
+hit2 <- res_pair_hit(cmat_ref$col2res)
+microbenchmark::microbenchmark(
+add_msa(ref_col2res, alt_col2res, alt_res2col, hit2)
 )
-# seriel
-## better not run...
-system.time(
-  cs2 <- add_msa_score(com_big, ref_big)
-)
+
+for(i in 1:100){
+hit <- add_msa_parallel(ref_col2res, alt_col2res, alt_res2col, ref_col2res_odd, hit)
+}
+hit[hit == -1] <- NA
+hit <- hit/1
+
+

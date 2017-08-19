@@ -2,12 +2,11 @@
 % Please edit documentation in R/guidance2.R
 \name{guidance2}
 \alias{guidance2}
-\title{GUIDetree-based AligNment ConficencE 2}
+\title{MSA reliability assessment GUIDANCE2 (Sela et al. 2015)}
 \usage{
 guidance2(sequences, msa.program = "mafft", exec, bootstrap = 100,
-  n.part = "auto", col.cutoff = "auto", seq.cutoff = "auto",
-  mask.cutoff = "auto", parallel = TRUE, ncore = "auto",
-  method = "auto", alt.msas.file, n.coopt = "auto")
+  n.part = "auto", parallel = TRUE, ncore = "auto", method = "auto",
+  int_file = FALSE, alt.msas.file, n.coopt = "auto")
 }
 \arguments{
 \item{sequences}{An object of class \code{\link{DNAbin}} or \code{\link{AAbin}}
@@ -21,17 +20,17 @@ alignment program.}
 
 \item{bootstrap}{An integer giving the number of perturbated MSAs.}
 
-\item{col.cutoff}{numberic between 0 and 1; specifies a cutoff to remove unreliable columns below the cutoff; either user supplied or "auto" (0.73)}
-
-\item{seq.cutoff}{numberic between 0 and 1; specifies a cutoff to remove unreliable sequences below the cutoff; either user supplied of "auto" (0.5)}
-
-\item{mask.cutoff}{specific residues below a certain cutoff are masked ('N' for DNA, 'X' for AA); either user supplied of "auto" (0.5)}
-
 \item{parallel}{logical, if TRUE, specify the number of cores}
 
 \item{ncore}{number of cores}
 
 \item{method}{further arguments passed to mafft, default is "auto"}
+
+\item{col.cutoff}{numberic between 0 and 1; specifies a cutoff to remove unreliable columns below the cutoff; either user supplied or "auto" (0.73)}
+
+\item{seq.cutoff}{numberic between 0 and 1; specifies a cutoff to remove unreliable sequences below the cutoff; either user supplied of "auto" (0.5)}
+
+\item{mask.cutoff}{specific residues below a certain cutoff are masked ('N' for DNA, 'X' for AA); either user supplied of "auto" (0.5)}
 
 \item{mask}{specific residues below a certain cutoff are masked ('N' for DNA, 'X' for AA)}
 }
@@ -72,6 +71,4 @@ G. Landan and D. Graur (2008). Local reliability measures from sets of co-optima
 }
 \author{
 Franz-Sebastian Krah
-
-Christoph Heibl
 }

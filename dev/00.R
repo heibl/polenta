@@ -10,17 +10,19 @@ library("stringr")
 library("scales")
 library("ggplot2")
 library("zoo")
-library(cowplot)
+library("cowplot")
+
+library("polenta")
 # 1.	Read example sequences
 ## DNA
 seq_dna <- read.fas("dev/data/cortinarius_28s_ms.fas")
 set.seed(100)
-seq_dna <- sample(seq_dna,10)
+seq_dna <- sample(seq_dna, 10)
 ## Amino Acids
-seq_aa <- read.fas("dev/data/AATF.fas")
+# seq_aa <- read.fas("dev/data/AATF.fas")
 
 
-# msa.program <- "mafft"
+msa.program <- "mafft"
 exec <- "/usr/local/bin/mafft"
 # msa.program <- "clustalo"
 # exec <- "/Applications/clustalo"
@@ -29,25 +31,53 @@ exec <- "/usr/local/bin/mafft"
 # msa.program <- "muscle"
 # exec <- "/Applications/muscle"
 
-system.time(g_r <- guidance(sequences = seq_dna,
-  msa.program = "mafft",
-  # exec = exec,
-  bootstrap = 100,
-  parallel = TRUE, ncore = "auto",
-  method = "retree 1",
-  nj.program = "R"))
+source("R/DEV-mafft.R")
+source("R/guidance_dev.R")
+
+sequences = seq_dna
+msa.program = "mafft"
+# exec = exec
+bootstrap = 100
+parallel = TRUE
+ncore = 4
+method = "retree 1"
+nj.program = "R"
+int_file = FALSE
+score_method = "Rcpp"
+
+system.time(
+  g_r <- guidance_dev(sequences = seq_dna,
+    msa.program = "mafft",
+    msa.exec = exec,
+    bootstrap = 100,
+    parallel = TRUE, ncore = "auto",
+    method = "retree 1",
+    nj.program = "R")
+)
+gsc <- daughter_scores(g_r, score = "gsc")
+
+
+
+
+system.time(
+  g_r2 <- guidance(sequences = seq_dna,
+    msa.program = "mafft",
+    # exec = exec,
+    bootstrap = 100,
+    parallel = TRUE, ncore = "auto",
+    method = "retree 1",
+    nj.program = "R")
+)
 
 system.time(
   g_sa <- guidanceSA(sequences = seq_dna,
-  msa.program = "mafft",
-  programm = "guidance",
-  bootstrap = 100,
-  proc_num = 4)
+    msa.program = "mafft",
+    programm = "guidance",
+    bootstrap = 100,
+    proc_num = 4,
+    exec = "/Applications/guidance.v2.02/")
 )
-g_r.h <- confidence.heatmap(g_r, title = "GUIDANCE R", legend = FALSE,
-  guidance_score = FALSE)
-g_sa.h <- confidence.heatmap(g_sa, title = "GUIDANCE SA", legend = FALSE,
-  guidance_score = FALSE)
+
 
 
 sequences = seq_aa
@@ -101,3 +131,4 @@ system.time(g2_sa <- guidanceSA(sequences = seq_aa,
   programm = "guidance2",
   bootstrap = 100,
   proc_num = 4))
+

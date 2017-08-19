@@ -2,7 +2,7 @@
 % Please edit documentation in R/spanningTree.R
 \name{spanningTree}
 \alias{spanningTree}
-\title{Minimum-Spanning-Tree for PASTA}
+\title{Spanning Tree for PASTA}
 \usage{
 spanningTree(phy, subtrees)
 }
