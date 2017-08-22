@@ -52,14 +52,15 @@
 
 
 guidance2 <- function(sequences,
-  msa.program = "mafft", exec,
+  msa.program = "mafft", msa.exec,
   bootstrap = 100,
   n.part="auto",
   parallel = TRUE, ncore ="auto",
   method = "auto",
   int_file = FALSE,
   alt.msas.file,
-  n.coopt = "auto"){
+  n.coopt = "auto",
+  score_method = "Rcpp"){
 
   ##############################################
   ## SOME CHECKS
@@ -69,22 +70,22 @@ guidance2 <- function(sequences,
 
 
   ## Check for MSA program
-  if (missing(exec)){
+  if (missing(msa.exec)){
     os <- Sys.info()[1]
     if (msa.program == "mafft") {
-      exec <- switch(os, Linux = "mafft", Darwin = "mafft",
+      msa.exec <- switch(os, Linux = "mafft", Darwin = "mafft",
         Windows = "mafft.bat")
     }
     if (msa.program == "muscle") {
-      exec <- switch(os, Linux = "muscle", Darwin = "muscle",
+      msa.exec <- switch(os, Linux = "muscle", Darwin = "muscle",
         Windows = "muscle3.8.31_i86win32.exe")
     }
     if (msa.program == "clustalw2") {
-      exec <- switch(os, Linux = "clustalw", Darwin = "clustalw2",
+      msa.exec <- switch(os, Linux = "clustalw", Darwin = "clustalw2",
         Windows = "clustalw2.exe")
     }
   }
-  out <- system(paste(exec, "--v"), ignore.stdout = TRUE, ignore.stderr = TRUE)
+  out <- system(paste(msa.exec, "--v"), ignore.stdout = TRUE, ignore.stderr = TRUE)
   if (out == 127)
     stop("please provide exec path or install MSA program in root \n
       i.e. in Unix: '/usr/local/bin/mafft'")
@@ -116,7 +117,7 @@ guidance2 <- function(sequences,
   { mafft_method <- ", method = method" }else{ mafft_method <- "" }
 
   base.msa <- paste(msa.program, "(",
-    "x = sequences, exec = exec",
+    "x = sequences, exec = msa.exec",
     mafft_method, ")", sep = "")
 
   ## Make alignment
@@ -223,7 +224,7 @@ guidance2 <- function(sequences,
 
   ## Prepare TEMP files for all outputs (GUIDANCE + HoT)
   if(int_file){
-    msa_out <- vector(length = (bootstrap+ (bootstrap*n.coopt)))
+    msa_out <- vector(length = (bootstrap + (bootstrap*n.coopt)))
     for (i in 1:bootstrap)
       msa_out[i] <- tempfile(pattern = "mafft", tmpdir = tempdir(), fileext = ".fas")
     for (i in 1:(bootstrap*n.coopt))
@@ -242,47 +243,33 @@ guidance2 <- function(sequences,
   if(int_file)
   { intfile <- ", file = msa_out[i]" }else{ intfile <- "" }
 
-  if (msa.program == "mafft"){
+  switch(msa.program,
 
+    mafft={
     FUN <- function(i) {
       paste("mafft(x = sequences, gt = nj.guide.trees[[", i, "]],
-      exec = exec, method = method,
-      op = runif(1,0,5))), ", intfile, sep ="")
-    }
-
-    foreach(i = 1:bootstrap, .packages=c('ips', 'ape', 'polenta'),
-      .options.snow = opts)  %dopar% {
-        eval(parse(text = FUN(i)))
-      }
-  }
-  if (msa.program == "muscle"){
+      exec = msa.exec, method = method,
+      op = runif(1,0,5))", intfile, sep ="")
+    }},
+      muscle={
     FUN <- function(i) {
       paste("muscle2(x = sequences, gt = nj.guide.trees[[,", i, ", ]],
-        exec = exec,
-        file = msa_out[i],
-        MoreArgs = paste('-gapopen ', format(runif(1, -400, -10), digits = 0)",
-        intfile, sep ="")
-    }
-
-    foreach(i = 1:bootstrap, .packages=c('ips', 'ape', 'polenta'),
-      .options.snow = opts)  %dopar% {
-        eval(parse(text = FUN(i)))
-      }
-  }
-  if (msa.program == "clustalw2"){
-
+        exec = msa.exec, MoreArgs = paste('-gapopen ', format(runif(1, -400, -10), digits = 0)",
+        intfile,")", sep ="")
+    }},
+  clustalw2={
     FUN <- function(i) {
       paste("clustalw2(x = sequences, gt = nj.guide.trees[[,", i, "]],
-          exec = exec, file = msa_out[i],
+          exec = msa.exec, file = msa_out[i],
         MoreArgs = paste('-PAIRGAP=', format(runif(1, 1, 9), digits = 0), sep =')')",
-        intfile, sep ="")
-    }
+        intfile, ")",sep ="")
+    }})
 
-    foreach(i = 1:bootstrap, .packages=c('ips', 'ape', 'polenta'),
-      .options.snow = opts)  %dopar% {
-        eval(parse(text = FUN(i)))
-      }
-  }
+  msa_out <- foreach(i = 1:bootstrap, .packages=c('ips', 'ape', 'polenta'),
+    .export = c("sequences", "nj.guide.trees", "msa.exec", "method"),
+    .options.snow = opts)  %dopar% {
+      eval(parse(text = FUN(i)))
+    }
   stopCluster(cl)
   close(pb)
 
@@ -302,44 +289,44 @@ guidance2 <- function(sequences,
   cat(paste("Sampling", n.coopt, "co-optimal alignments (HoT) \n", sep=" "))
 
   # predifined file allocation
-  if(int_file){
+
   start <- seq(1,n.coopt*bootstrap,n.coopt)
   end <- seq(n.coopt,n.coopt*bootstrap,n.coopt)
   stend <- data.frame(start, end)
   stend <- stend + bootstrap
-  }
 
   ## run HoT
-  pb <- txtProgressBar(max = bootstrap, style = 3)
 
   progress <- function(n) setTxtProgressBar(pb, n)
   opts <- list(progress = progress)
   cl <- makeCluster(ncore)
   registerDoSNOW(cl)
 
-  if(int_file){
-    FUN <- function(i){
-      paste("Hot_GUIDANCE2(msa = msa_out[," ,i, "], n.coopt = n.coopt,
-        files = msa_out[stend[" ,i, ",1]:stend[" ,i, ",2]],
+  FUN <- function(i){
+    paste("Hot_GUIDANCE2(msa = msa_out",
+      ifelse(int_file, "[", "[["), i, ifelse(int_file, "]", "]]"),
+      ", n.coopt = n.coopt,
+      files = msa_out[stend[" ,i, ",1]:stend[" ,i, ",2]], int_file = ", int_file, ",
       raw_seq = sequences, msa.program = msa.program,
-      method = method, exec = exec)")
-    }
-  }else{
-    FUN <- function(i){
-      paste("Hot_GUIDANCE2(msa = msa_out[," ,i, "], n.coopt = n.coopt,
-        raw_seq = sequences, msa.program = msa.program,
-        method = method, exec = exec)")
-    }
+      method = method, msa.exec = msa.exec)")
   }
 
   alt.msa <- foreach(i = 1:bootstrap,.options.snow = opts,
-    .packages = c('polenta', 'ips', 'adephylo', 'foreach', 'phangorn')) %dopar% {
+    .packages = c('polenta', 'ips', 'adephylo', 'foreach', 'phangorn'),
+    .export = c("n.coopt", "sequences", "msa.program",
+      "method", "msa.exec", "alt.msa")) %dopar% {
       eval(parse(text = FUN(i)))
     }
   stopCluster(cl)
   close(pb)
 
 
+  #### unlist nested list
+  if(int_file){
+    alt.msa <- foreach(i = 1:length(alt.msa), .combine = c) %do% {
+      alt.msa2[[1]]
+    }
+  }
   ##############################################
   ## PART IV
   ##############################################
@@ -369,7 +356,7 @@ guidance2 <- function(sequences,
     "Rcpp" = {
       ## Rcpp functions are called
       score <- msa_set_scoreR(ref = base.msa,
-        alt = alt.msa, bootstrap = bootstrap)
+        alt = alt.msa2, bootstrap = bootstrap)
     },
     "SA" = {
       ## msa_set_score from GUIDANCE package is called
@@ -406,5 +393,9 @@ guidance2 <- function(sequences,
   if(score_method=="SA"){
     score <- score$residue_pair_score
   }
-  polentaDNA(base.msa, score, "polenta")
+  if(inherits(sequences, "AAbin")){
+    polentaAA(base.msa, score, "guidance2")
+  }else{
+    polentaDNA(base.msa, score, "guidance2")
+  }
 }

@@ -19,11 +19,11 @@ seq_dna <- read.fas("dev/data/cortinarius_28s_ms.fas")
 set.seed(100)
 seq_dna <- sample(seq_dna, 10)
 ## Amino Acids
-# seq_aa <- read.fas("dev/data/AATF.fas")
+seq_aa <- read.fas("dev/data/AATF.fas")
 
 
 msa.program <- "mafft"
-exec <- "/usr/local/bin/mafft"
+msa.exec <- "/usr/local/bin/mafft"
 # msa.program <- "clustalo"
 # exec <- "/Applications/clustalo"
 # msa.program <- "clustalw2"
@@ -46,16 +46,15 @@ int_file = FALSE
 score_method = "Rcpp"
 
 system.time(
-  g_r <- guidance_dev(sequences = seq_dna,
+  g_r <- guidance(sequences = seq_aa,
     msa.program = "mafft",
-    msa.exec = exec,
+    msa.exec = msa.exec,
     bootstrap = 100,
     parallel = TRUE, ncore = "auto",
     method = "retree 1",
     nj.program = "R")
 )
-gsc <- daughter_scores(g_r, score = "gsc")
-
+gsc <- daughter_scores(g_r, score = c("gcsc", "rprsc"))
 
 
 
@@ -132,3 +131,10 @@ system.time(g2_sa <- guidanceSA(sequences = seq_aa,
   bootstrap = 100,
   proc_num = 4))
 
+
+
+file <- system.file("extdata", "BB50009.fasta", package = "polenta")
+aa_seq<- read.fas(file)
+g_res <- guidance(sequences = aa_seq)
+scores <- daughter_scores(g_r, score = c("gcsc", "rprsc"))
+hist(scores$gcsc$score, xlab = "Column score", main = "GUIDANCE")

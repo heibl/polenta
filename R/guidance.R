@@ -44,43 +44,19 @@
 #'
 #' @examples
 #' \dontrun{
-#' # first run GUIDANCE on example data using MAFFT
+#' # run GUIDANCE on example data using MAFFT
 #' file <- system.file("extdata", "BB50009.fasta", package = "rpg")
 #' aa_seq<- read.fas(file)
-#' g_msa <- guidance(sequences = aa_seq,
-#' msa.program = "mafft",
-#' exec = "/usr/local/bin/mafft",
-#' bootstrap = 100,
-#' parallel = FALSE,
-#' method = "retree 1")
-#' h.p <- confidence.heatmap(g_msa, title = "GUIDANCE BB50009 benchmark",
-#' legend = TRUE,guidance_score = TRUE)
-#' h.p
-#' # again with Muscle
-#' g_msa_m <- guidance(sequences = aa_seq,
-#' msa.program = "muscle",
-#' exec = "/Applications/muscle",
-#' bootstrap = 100,
-#' parallel = FALSE,
-#' method = "retree 1")
-#' h.p <- confidence.heatmap(g_msa_m, title = "GUIDANCE BB50009 benchmark",
-#' legend = TRUE,guidance_score = TRUE)
-#' h.p
-#'
-#' ## Plot both for comparison
-#' h.p.mafft <- confidence.heatmap(g_msa, title = "MAFFT",
-#' legend = FALSE, guidance_score = FALSE)
-#' h.p.muscle <- confidence.heatmap(g_msa_m, title = "MUSCLE",
-#' legend = FALSE, guidance_score = FALSE)
-#' library(cowplot)
-#' plot_grid(h.p.mafft, h.p.muscle, ncol = 1, nrow = 2)
+#' g_res <- guidance(sequences = aa_seq)
+#' scores <- daughter_scores(g_r, score = c("gcsc", "rprsc"))
+#' hist(scores$gcsc$score, xlab = "Column score", main = "GUIDANCE")
 #' }
 #'
 #' @author Franz-Sebastian Krah
 #' @export
 
 guidance <- function(sequences,
-  msa.program = "mafft", msa.exec,
+  msa.program = "mafft", msa.exec = "/usr/local/bin/mafft",
   bootstrap = 100,
   parallel = FALSE, ncore ="auto",
   method = "auto",
@@ -106,25 +82,25 @@ guidance <- function(sequences,
     os <- Sys.info()
     os <- os[grep("sysname", names(os))]
     if (msa.program == "mafft") {
-      exec <- switch(os, Linux = "mafft", Darwin = "mafft",
+      msa.exec <- switch(os, Linux = "mafft", Darwin = "mafft",
         Windows = "mafft.bat")
     }
     if (msa.program == "muscle") {
-      exec <- switch(os, Linux = "muscle", Darwin = "muscle",
+      msa.exec <- switch(os, Linux = "muscle", Darwin = "muscle",
         Windows = "muscle3.8.31_i86win32.exe")
     }
     if (msa.program == "clustalo") {
-      exec <- switch(os, Linux = "clustalo", Darwin = "clustalo",
+      msa.exec <- switch(os, Linux = "clustalo", Darwin = "clustalo",
         Windows = "clustalo.exe")
     }
     if (msa.program == "clustalw2") {
-      exec <- switch(os, Linux = "clustalw", Darwin = "clustalw2",
+      msa.exec <- switch(os, Linux = "clustalw", Darwin = "clustalw2",
         Windows = "clustalw2.exe")
     }
   }
-  out <- system(paste(exec, "--v"), ignore.stdout = TRUE, ignore.stderr = TRUE)
+  out <- system(paste(msa.exec, "--v"), ignore.stdout = TRUE, ignore.stderr = TRUE)
   if (out == 127)
-    stop("please provide exec path or install MSA program in root \n
+    stop("please provide msa.exec path or install MSA program in root \n
       i.e. in Unix: '/usr/local/bin/mafft'")
 
   ## generate some parameters if not specified
@@ -150,7 +126,7 @@ guidance <- function(sequences,
   { mafft_method <- ", method = method" }else{ mafft_method <- "" }
 
   base.msa <- paste(msa.program, "(",
-    "x = sequences, exec = exec",
+    "x = sequences, exec = msa.exec",
     mafft_method, ")", sep = "")
 
   ## Make alignment
@@ -229,7 +205,7 @@ guidance <- function(sequences,
   { intfile <- ", file = msa_out[i]" }else{ intfile <- "" }
 
   FUN <- function(i) {paste(msa.program, "(",
-    "x = sequences, gt = nj.guide.trees[[", i,"]], exec = exec",
+    "x = sequences, gt = nj.guide.trees[[", i,"]], exec = msa.exec",
     mafft_method, intfile, ")", sep = "")}
 
   ## loop
@@ -241,7 +217,7 @@ guidance <- function(sequences,
 
   alt.msa <- foreach(i = 1:bootstrap, .packages = c('ips', 'ape'),
     .options.snow = opts,
-    .export = c("sequences", "nj.guide.trees", "exec"))  %dopar% {
+    .export = c("sequences", "nj.guide.trees", "msa.exec"))  %dopar% {
       eval(parse(text = FUN(i)))
     }
 
@@ -378,5 +354,9 @@ guidance <- function(sequences,
   if(score_method=="SA"){
     score <- score$residue_pair_score
   }
-  polentaDNA(base.msa, score, "polenta")
+  if(inherits(sequences, "AAbin")){
+    polentaAA(base.msa, score, "guidance")
+  }else{
+    polentaDNA(base.msa, score, "guidance")
+  }
 }

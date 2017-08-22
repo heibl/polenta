@@ -13,25 +13,24 @@
 #' @export
 
 
-daughter_scores <- function(rpsc, score = "gcsc"){
+daughter_scores <- function(rpsc, score = c("gcsc", "rprsc"), na.rm = TRUE){
 
-  if(!inherits(rpsc, c("polenta"))){
+  if(!inherits(rpsc, c("polentaDNA", "polentaAA"))){
     stop("rpsc not if class 'polenta'")
   }
-  sc <- polenta_obj@score
-  base.msa <- polenta_obj@base.msa
+  sc <- rpsc@scores
+  base.msa <- rpsc@msa
 
-  switch(score,
-    "gcsc"={
+  if(match.arg(score, "gcsc", several.ok = TRUE)=="gcsc"){
       ## calculate GUIDANCE score
       gcsc <- colMeans(sc, na.rm = TRUE)
       gcsc <- data.frame(col = 1:length(gcsc), score = gcsc)
       if(na.rm){
         gcsc <- gcsc[!is.na(gcsc$score), ]
       }
-    },
+    }
 
-    "rprsc"={
+  if(match.arg(score, "rprsc", several.ok = TRUE)=="rprsc"){
       ## Calculate residue pair residue score
       fac <- apply(combn(nrow(base.msa), 2), 2, paste, collapse = "-")
       fac_list <- foreach(i = 1:nrow(base.msa)) %do% grep(paste0(i, "\\b"), fac)
@@ -45,7 +44,7 @@ daughter_scores <- function(rpsc, score = "gcsc"){
       if(na.rm){
         rprsc <- rprsc[, !apply(rprsc, 2, function(x) !any(!is.na(x)))]
       }
-    })
+    }
 
   return(mget(score))
 }

@@ -4,7 +4,7 @@
 \alias{daughter_scores}
 \title{Calculate additional scores based on residue pair score}
 \usage{
-daughter_scores(rpsc, score = "gcsc")
+daughter_scores(rpsc, score = c("gcsc", "rprsc"), na.rm = TRUE)
 }
 \arguments{
 \item{score}{character, currently c("gcsc", "rprsc"); gcsc = guidance column score; rprsc = residue pair residue score.}

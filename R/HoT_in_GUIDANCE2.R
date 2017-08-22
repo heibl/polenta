@@ -1,12 +1,13 @@
 #' @export
 
 Hot_GUIDANCE2 <- function(msa, n.coopt, type, td,
-  files, raw_seq, msa.program, method,
-  exec){
+  files, raw_seq, msa.program, method, int_file,
+  msa.exec){
 
   # create start_tree
   li <- msa
-  msa <- read.fas(msa)
+  if(is.character(msa))
+    msa <- read.fas(msa)
   msa.nj <- ape::nj(dist.ml(as.phyDat(msa)))
   msa.nj <- root(msa.nj, outgroup = msa.nj$tip.label[1])
   msa.nj <- multi2di(msa.nj)
@@ -30,9 +31,8 @@ Hot_GUIDANCE2 <- function(msa, n.coopt, type, td,
 
   # make the 4 or n alignments
   alt_msas <- foreach(z = 1:ncol(align_parts)) %do% {
-    # setTxtProgressBar(pb, i)
     align_part_set(x = raw_seq, partition_set = align_parts[,z],
-      method = method, exec = exec, msa.program = msa.program,
+      method = method, msa.exec = msa.exec, msa.program = msa.program,
       coopt.sub = n.co.sub[z])
   }
 
@@ -42,8 +42,10 @@ Hot_GUIDANCE2 <- function(msa, n.coopt, type, td,
   }
 
   ## write to files
+  if(int_file){
   for(j in 1:n.coopt)
     write.fas(alt_msas[[j]], files[j])
+  }else{return(alt_msas)}
 }
 
 

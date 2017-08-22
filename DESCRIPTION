@@ -58,6 +58,8 @@ Collate:
     'phy_partitions.R'
     'polenta-package.R'
     'polenta.R'
+    'polentaAA-class.R'
+    'polentaAA.R'
     'polentaDNA-class.R'
     'polentaDNA.R'
     'reappendScores.R'

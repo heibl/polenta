@@ -4,10 +4,10 @@
 \alias{guidance}
 \title{GUIDetree-based AligNment ConficencE}
 \usage{
-guidance(sequences, msa.program = "mafft", msa.exec, bootstrap = 100,
-  parallel = FALSE, ncore = "auto", method = "auto", int_file = FALSE,
-  alt.msas.file, nj.program = "R", score_method = "Rcpp",
-  msa_set_score.exec)
+guidance(sequences, msa.program = "mafft",
+  msa.exec = "/usr/local/bin/mafft", bootstrap = 100, parallel = FALSE,
+  ncore = "auto", method = "auto", int_file = FALSE, alt.msas.file,
+  nj.program = "R", score_method = "Rcpp", msa_set_score.exec)
 }
 \arguments{
 \item{sequences}{An object of class \code{\link{DNAbin}} or
@@ -42,36 +42,12 @@ Calculates column confidence (and other scors) by comparing
 }
 \examples{
 \dontrun{
-# first run GUIDANCE on example data using MAFFT
+# run GUIDANCE on example data using MAFFT
 file <- system.file("extdata", "BB50009.fasta", package = "rpg")
 aa_seq<- read.fas(file)
-g_msa <- guidance(sequences = aa_seq,
-msa.program = "mafft",
-exec = "/usr/local/bin/mafft",
-bootstrap = 100,
-parallel = FALSE,
-method = "retree 1")
-h.p <- confidence.heatmap(g_msa, title = "GUIDANCE BB50009 benchmark",
-legend = TRUE,guidance_score = TRUE)
-h.p
-# again with Muscle
-g_msa_m <- guidance(sequences = aa_seq,
-msa.program = "muscle",
-exec = "/Applications/muscle",
-bootstrap = 100,
-parallel = FALSE,
-method = "retree 1")
-h.p <- confidence.heatmap(g_msa_m, title = "GUIDANCE BB50009 benchmark",
-legend = TRUE,guidance_score = TRUE)
-h.p
-
-## Plot both for comparison
-h.p.mafft <- confidence.heatmap(g_msa, title = "MAFFT",
-legend = FALSE, guidance_score = FALSE)
-h.p.muscle <- confidence.heatmap(g_msa_m, title = "MUSCLE",
-legend = FALSE, guidance_score = FALSE)
-library(cowplot)
-plot_grid(h.p.mafft, h.p.muscle, ncol = 1, nrow = 2)
+g_res <- guidance(sequences = aa_seq)
+scores <- daughter_scores(g_r, score = c("gcsc", "rprsc"))
+hist(scores$gcsc$score, xlab = "Column score", main = "GUIDANCE")
 }
 
 }
