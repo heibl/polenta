@@ -29,6 +29,11 @@
 
 msa_set_scoreR <- function(ref, alt, bootstrap){
 
+
+  if (!inherits(ref, c("DNAbin", "AAbin")))
+    stop("MSA not of class DNAbin or AAbin (ape)")
+
+
   gbbin <- function(msa){
     msa <- (msa != "-")*1
     return(msa)
@@ -47,14 +52,18 @@ msa_set_scoreR <- function(ref, alt, bootstrap){
     alt <- list.files(alt, full.names = TRUE)
     alt <- lapply(alt, read.fas)
   }else{
-    if(!inherits(alt, "list"))stop("'alt' must be either list or a path")
+    if(!inherits(alt, c("list", "AAbin", "DNAbin")))
+      stop("ALT MSAs must be a list of MSAs of class AAbin or DNAbin")
   }
 
   ## Compare MSAs
   for(i in 1:bootstrap){
 
     ## Cmatrix MSA
-    com <- gbbin(as.character(alt[[i]]))
+    if(inherits(alt, "list"))
+      com <- gbbin(as.character(alt[[i]]))
+    if(inherits(alt, c("AAbin", "DNAbin")))
+      com <- gbbin(as.character(alt))
     cmat_alt <- msa_recode(com)
     alt_col2res <- cmat_alt$col2res
     alt_res2col <- cmat_alt$res2col

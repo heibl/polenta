@@ -1,4 +1,4 @@
-Rcpp::sourceCpp("dev/score_calculation_DEV.cpp")
+# Rcpp::sourceCpp("d/score_calculation_DEV.cpp")
 # Rcpp::sourceCpp("dev/add_msa_par.cpp")
 Rcpp::sourceCpp("src/score_calculation.cpp")
 

@@ -74,7 +74,7 @@ polenta <- function(seqs, gt, k = 200, bootstrap = 100,
     seqs <- lapply(subtrees, foo, seqs = seqs)
     names(seqs) <- names(subtrees)
 
-    ## special case: there are only two subMSAa and the will be simply merged
+    ## special case: there are only two subMSAa and they will be simply merged
     ## with out transitivity merging
     if (length(seqs) == 2){
 

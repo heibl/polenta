@@ -59,16 +59,6 @@ gsc <- daughter_scores(g_r, score = c("gcsc", "rprsc"))
 
 
 system.time(
-  g_r2 <- guidance(sequences = seq_dna,
-    msa.program = "mafft",
-    # exec = exec,
-    bootstrap = 100,
-    parallel = TRUE, ncore = "auto",
-    method = "retree 1",
-    nj.program = "R")
-)
-
-system.time(
   g_sa <- guidanceSA(sequences = seq_dna,
     msa.program = "mafft",
     programm = "guidance",
@@ -100,15 +90,6 @@ system.time(
     proc_num = 4,
     quiet = FALSE)
 )
-hot_r.h <- confidence.heatmap(hot_msa, title = "HoT SA", legend = FALSE,
-  guidance_score = FALSE)
-hot_sa.h <- confidence.heatmap(hot_sa, title = "HoT SA", legend = FALSE,
-  guidance_score = FALSE)
-plot_grid(hot_r.h, hot_sa.h, nrow = 2, ncol = 1)
-
-
-
-
 
 
 
@@ -138,3 +119,10 @@ aa_seq<- read.fas(file)
 g_res <- guidance(sequences = aa_seq)
 scores <- daughter_scores(g_r, score = c("gcsc", "rprsc"))
 hist(scores$gcsc$score, xlab = "Column score", main = "GUIDANCE")
+
+
+
+### test sceme
+c(parallel = "TRUE", parallel = "FALSE")
+c(sequences = "seq_aa", sequences = "seq_dna")
+c(msa.program="mafft", msa.program="muscle", msa.program = "clustalo", msa.program = "clustalw")

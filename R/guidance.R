@@ -45,10 +45,10 @@
 #' @examples
 #' \dontrun{
 #' # run GUIDANCE on example data using MAFFT
-#' file <- system.file("extdata", "BB50009.fasta", package = "rpg")
+#' file <- system.file("extdata", "BB50009.fasta", package = "polenta")
 #' aa_seq<- read.fas(file)
 #' g_res <- guidance(sequences = aa_seq)
-#' scores <- daughter_scores(g_r, score = c("gcsc", "rprsc"))
+#' scores <- daughter_scores(g_res, score = c("gcsc", "rprsc"))
 #' hist(scores$gcsc$score, xlab = "Column score", main = "GUIDANCE")
 #' }
 #'

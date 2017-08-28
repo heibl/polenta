@@ -314,7 +314,7 @@ guidance2 <- function(sequences,
   alt.msa <- foreach(i = 1:bootstrap,.options.snow = opts,
     .packages = c('polenta', 'ips', 'adephylo', 'foreach', 'phangorn'),
     .export = c("n.coopt", "sequences", "msa.program",
-      "method", "msa.exec", "alt.msa")) %dopar% {
+      "method", "msa.exec", "msa_out")) %dopar% {
       eval(parse(text = FUN(i)))
     }
   stopCluster(cl)
@@ -356,13 +356,13 @@ guidance2 <- function(sequences,
     "Rcpp" = {
       ## Rcpp functions are called
       score <- msa_set_scoreR(ref = base.msa,
-        alt = alt.msa2, bootstrap = bootstrap)
+        alt = alt.msa, bootstrap = bootstrap)
     },
     "SA" = {
       ## msa_set_score from GUIDANCE package is called
       score <- msa_set_scoreSA(ref = base.msa,
-        alt = alt.msa,
-        bootstrap = bootstrap, exec = msa_set_score.exec)
+        alt = alt.msa, bootstrap = bootstrap,
+        exec = msa_set_score.exec)
     }
   )
 
