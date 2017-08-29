@@ -4,31 +4,28 @@
 \alias{guidance}
 \title{GUIDetree-based AligNment ConficencE}
 \usage{
-guidance(sequences, msa.program = "mafft",
-  msa.exec = "/usr/local/bin/mafft", bootstrap = 100, parallel = FALSE,
-  ncore = "auto", method = "auto", int_file = FALSE, alt.msas.file,
-  nj.program = "R", score_method = "Rcpp", msa_set_score.exec)
+guidance(sequences, msa.exec = "/usr/local/bin/mafft", bootstrap = 100,
+  ncore = 1, method = "auto", store_msas = FALSE)
 }
 \arguments{
-\item{sequences}{An object of class \code{\link{DNAbin}} or
+\item{sequences}{object of class \code{\link{DNAbin}} or
 \code{\link{AAbin}} containing unaligned sequences of DNA or amino acids.}
 
-\item{msa.program}{A charcter string giving the name of the MSA program,
-currelty one of c("mafft", "muscle", "clustalo", "clustalw2"); MAFFT is
-default}
+\item{msa.exec}{character string giving the path to the executable of the
+alignment program (e.g. "/usr/local/bin/mafft"); Must be on of: 'mafft', 'muscle', 'clustalo', 'clustalw2'}
 
-\item{bootstrap}{An integer giving the number of perturbated MSAs.}
+\item{bootstrap}{integer giving the number of alternative MSAs to be computed}
 
-\item{parallel}{logical, if TRUE, specify the number of cores}
+\item{ncore}{integer specifying the number of cores; default = 1 (serial), "auto" can be used for automated usage of all detected cores}
 
-\item{ncore}{number of cores (default is maxinum of local threads)}
+\item{method}{further argument passed to mafft, default is \code{"auto"}}
+}
+\value{
+object of class \code{polenta}:
 
-\item{method}{further arguments passed to mafft, default is \code{"auto"}}
+msa original MSA as computed by \code{msa.program}
 
-\item{nj.program}{specify if R functions or SEMPHY should be used for guide-tree estimation}
-
-\item{exec}{A character string giving the path to the executable of the
-alignment program.}
+scores residue pair score
 }
 \description{
 MSA reliability assessment GUIDANCE (Penn et al. 2010)
@@ -43,10 +40,10 @@ Calculates column confidence (and other scors) by comparing
 \examples{
 \dontrun{
 # run GUIDANCE on example data using MAFFT
-file <- system.file("extdata", "BB50009.fasta", package = "rpg")
+file <- system.file("extdata", "BB50009.fasta", package = "polenta")
 aa_seq<- read.fas(file)
 g_res <- guidance(sequences = aa_seq)
-scores <- daughter_scores(g_r, score = c("gcsc", "rprsc"))
+scores <- daughter_scores(g_res, score = c("gcsc", "rprsc"))
 hist(scores$gcsc$score, xlab = "Column score", main = "GUIDANCE")
 }
 
@@ -63,7 +60,7 @@ G. Landan and D. Graur (2008). Local reliability measures from
   sets of co-optimal multiple sequencesuence alignments. 13:15--24
 }
 \seealso{
-\code{\link{compareMSAs}}, \code{\link{guidance2}},
+\code{\link{msa_set_scoreR}}, \code{\link{guidance2}},
   \code{\link{HoT}}
 }
 \author{

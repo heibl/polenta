@@ -4,30 +4,26 @@
 \alias{msa_set_scoreR}
 \title{Compare reference MSAs with alternative MSAs}
 \usage{
-msa_set_scoreR(ref, alt, bootstrap)
+msa_set_scoreR(ref, alt)
 }
 \arguments{
-\item{ref}{of class data.frame, is the reference MSA ('BASE MSA') with
-sequences as columns}
+\item{ref}{MSA of class \code{\link{AAbin}} or \code{\link{bin}}}
 
-\item{alt}{path to alternative files}
+\item{alt}{single MSA or list of MSAs or path to alternative files. Single MSAs and list members should be of class \code{\link{AAbin}} or \code{\link{DNAbin}}}
 
 \item{bootstrap}{number of alt MSAs}
 
 \item{na.rm}{logical if gab comparisons should be deleted}
 }
 \value{
-list containing following score:
+matrix containing following scores:
 
-residue_pair_score: if one alternative MSA is supplied then this is 1
+residue_pair_score: if one alternative MSA is supplied then the score is 1
   if a residue pair was identically aligned as in the reference MSA and 0
-  otherwise. If more than one, then the average of the residue pair scores
-  that result from each comparison with the reference MSA.
+  otherwise. If more than one alternative MSA is used, then the average of the residue pair scores from all comparisons
 }
 \description{
 MSA reliability scores (Penn et al. 2010)
-
-Rcpp code computing basic MSA comparision. The most basic is the residue pairs residue score, which checks if residue pairs combinations are correctly aligned in both MSAs.
 }
 \references{
 Penn et al. (2010). An alignment confidence score capturing

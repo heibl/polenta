@@ -5,18 +5,16 @@
 #'
 #' @description MSA reliability scores (Penn et al. 2010)
 #'
-#' @param ref of class data.frame, is the reference MSA ('BASE MSA') with
-#'   sequences as columns
-#' @param alt path to alternative files
+#' @param ref MSA of class \code{\link{AAbin}} or \code{\link{bin}}
+#' @param alt single MSA or list of MSAs or path to alternative files. Single MSAs and list members should be of class \code{\link{AAbin}} or \code{\link{DNAbin}}
 #' @param bootstrap number of alt MSAs
 #' @param na.rm logical if gab comparisons should be deleted
 #'
-#' @return list containing following score:
-#' @return residue_pair_score: if one alternative MSA is supplied then this is 1
+#' @return matrix containing following scores:
+#' @return residue_pair_score: if one alternative MSA is supplied then the score is 1
 #'   if a residue pair was identically aligned as in the reference MSA and 0
-#'   otherwise. If more than one, then the average of the residue pair scores
-#'   that result from each comparison with the reference MSA.
-#' @description Rcpp code computing basic MSA comparision. The most basic is the residue pairs residue score, which checks if residue pairs combinations are correctly aligned in both MSAs.
+#'   otherwise. If more than one alternative MSA is used, then the average of the residue pair scores from all comparisons
+
 #' @references Penn et al. (2010). An alignment confidence score capturing
 #'   robustness to guide tree uncertainty. Molecular Biology and Evolution
 #'   27:1759--1767
@@ -27,8 +25,11 @@
 #' @export
 
 
-msa_set_scoreR <- function(ref, alt, bootstrap){
+msa_set_scoreR <- function(ref, alt){
 
+  ## functions 'msa_recode', 'res_pair_hit' and 'add_msa'
+  ## are Rcpp functions
+  ## => folder 'src' of the package source code
 
   if (!inherits(ref, c("DNAbin", "AAbin")))
     stop("MSA not of class DNAbin or AAbin (ape)")
@@ -51,13 +52,18 @@ msa_set_scoreR <- function(ref, alt, bootstrap){
   if(is.character(alt)){
     alt <- list.files(alt, full.names = TRUE)
     alt <- lapply(alt, read.fas)
-  }else{
-    if(!inherits(alt, c("list", "AAbin", "DNAbin")))
-      stop("ALT MSAs must be a list of MSAs of class AAbin or DNAbin")
+    n <- length(alt)
   }
+  if(!inherits(alt, c("list", "AAbin", "DNAbin")))
+    stop("ALT MSAs must be a list of MSAs of class AAbin or DNAbin")
+
+  if(inherits(alt, "list"))
+    n <- length(alt)
+  if(inherits(alt, c("AAbin", "DNAbin")))
+    n <- 1
 
   ## Compare MSAs
-  for(i in 1:bootstrap){
+  for(i in 1:n){
 
     ## Cmatrix MSA
     if(inherits(alt, "list"))
@@ -74,6 +80,6 @@ msa_set_scoreR <- function(ref, alt, bootstrap){
 
   }
   scores[scores == -1] <- NA
-  scores <- scores/bootstrap
+  scores <- scores/n
   return(scores)
 }

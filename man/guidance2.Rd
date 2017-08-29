@@ -4,50 +4,29 @@
 \alias{guidance2}
 \title{MSA reliability assessment GUIDANCE2 (Sela et al. 2015)}
 \usage{
-guidance2(sequences, msa.program = "mafft", msa.exec, bootstrap = 100,
-  n.part = "auto", parallel = TRUE, ncore = "auto", method = "auto",
-  int_file = FALSE, alt.msas.file, n.coopt = "auto",
-  score_method = "Rcpp")
+guidance2(sequences, msa.exec = "/usr/local/bin/mafft", bootstrap = 100,
+  n.part = "auto", ncore = 1, method = "auto", store_msas = FALSE,
+  n.coopt = "auto")
 }
 \arguments{
-\item{sequences}{An object of class \code{\link{DNAbin}} or \code{\link{AAbin}}
-containing unaligned sequences of DNA or amino acids.}
+\item{sequences}{object of class \code{\link{DNAbin}} or
+\code{\link{AAbin}} containing unaligned sequences of DNA or amino acids.}
 
-\item{msa.program}{A charcter string giving the name of the MSA program,
-currenlty one of c("mafft", "muscle", "clustalw2"); MAFFT is default}
+\item{msa.exec}{character string giving the path to the executable of the
+alignment program (e.g. "/usr/local/bin/mafft"); Must be on of: 'mafft', 'muscle', 'clustalo', 'clustalw2'}
 
-\item{bootstrap}{An integer giving the number of perturbated MSAs.}
+\item{bootstrap}{integer giving the number of alternative MSAs to be computed}
 
-\item{parallel}{logical, if TRUE, specify the number of cores}
+\item{ncore}{integer specifying the number of cores; default = 1 (serial), "auto" can be used for automated usage of all detected cores}
 
-\item{ncore}{number of cores}
-
-\item{method}{further arguments passed to mafft, default is "auto"}
-
-\item{col.cutoff}{numberic between 0 and 1; specifies a cutoff to remove unreliable columns below the cutoff; either user supplied or "auto" (0.73)}
-
-\item{seq.cutoff}{numberic between 0 and 1; specifies a cutoff to remove unreliable sequences below the cutoff; either user supplied of "auto" (0.5)}
-
-\item{mask.cutoff}{specific residues below a certain cutoff are masked ('N' for DNA, 'X' for AA); either user supplied of "auto" (0.5)}
-
-\item{exec}{A character string giving the path to the executable of the
-alignment program.}
-
-\item{mask}{specific residues below a certain cutoff are masked ('N' for DNA, 'X' for AA)}
+\item{method}{further argument passed to mafft, default is \code{"auto"}}
 }
 \value{
-alignment_score: is the GUIDANCE alignment score
+object of class \code{polenta}:
 
-GUIDANCE_residue_score
+msa original MSA as computed by \code{msa.program}
 
-GUIDANCE_score: is the GUIDANCE column score
-
-GUIDANCE_sequence_score
-
-guidance_msa: is the base MSA removed from unreliable columns below
-  cutoff
-
-base_msa
+scores residue pair score
 }
 \description{
 MSA reliability assessment GUIDANCE2 (Sela et al. 2015)
