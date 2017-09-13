@@ -8,7 +8,7 @@
 #' @param ref MSA of class \code{\link{AAbin}} or \code{\link{bin}}
 #' @param alt single MSA or list of MSAs or path to alternative files. Single MSAs and list members should be of class \code{\link{AAbin}} or \code{\link{DNAbin}}
 #' @param bootstrap number of alt MSAs
-#' @param na.rm logical if gab comparisons should be deleted
+#' @param na.rm logical if gap comparisons should be deleted
 #'
 #' @return matrix containing following scores:
 #' @return residue_pair_score: if one alternative MSA is supplied then the score is 1

@@ -3,7 +3,7 @@
 #' Calculate additional scores based on residue pair score
 #'
 #' @param polenta object of class \code{\link{polenta}}
-#' @param score character, currently c("column", "residue", "alignment", "sequence")
+#' @param score character, currently c("column", "residue", "alignment", "sequence", "all")
 #'
 #' @details The score 'column' is the GUIDANCE column score which is the mean of the residue pair residue score across columns. The score 'alignment' is the mean across the residue pair residue scores. The score 'sequence' is the mean of the residue pair score across rows (sequences). The score 'residue' is the mean score across the residue pairs with that residue (residue pair score).
 #'
@@ -18,6 +18,8 @@
 #'   biology 64:778--791
 #'
 #' @return data.frame or list of data.frames with scores
+#'
+#' @seealso \code{\link{filterMSA}}
 #'
 #' @author Franz-Sebastian Krah
 #' @import parallel

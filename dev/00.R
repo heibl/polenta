@@ -29,6 +29,7 @@ exec <- "/usr/local/bin/mafft"
 # exec <- "/Applications/clustalo"
 # exec <- "/Applications/clustalw2"
 # exec <- "/Applications/muscle"
+exec <- "/Applications/guidance.v2.02/"
 
 sequences = seq_dna
 msa.exec = exec
@@ -63,7 +64,9 @@ dim(msa_masked$msa)
 system.time(
   g_sa <- guidanceSA(sequences = seq,
     msa.program = "mafft",
-    programm = "guidance")
+    programm = "guidance",
+    exec = exec,
+    bootstrap = 100)
 )
 
 

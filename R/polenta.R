@@ -1,5 +1,5 @@
 ## This code is part of the polenta package
-## © F.-S. Krah (last update 2017-08-18)
+## © C. Heibl 2017, F.-S. Krah (last update 2017-08-18)
 
 #' @title Ultra-Large Multiple Sequence Alignment with PASTA
 #' @description Provides a complete reimplementation of the PASTA algorithm

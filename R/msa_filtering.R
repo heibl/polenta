@@ -10,7 +10,7 @@
 #' @param flag_a character specifying a path. If path is supplied function writes the filtered MSA into a fasta file. Additionally the function produces a file with the column score ready for RAxML input (flag -a)
 #' @return masked MSA of class \code{AAbin} or \code{DNAbin}
 #' @return column_score is optional
-#'
+#' @seealso \code{\link{scores}}
 #' @author Franz-Sebastian Krah
 #' @export
 

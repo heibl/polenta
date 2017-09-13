@@ -39,7 +39,7 @@
 
 guidanceSA <- function(sequences, msa.program, programm,
   bootstrap, gencode, outorder, msafile, cutoff= 0.93,
-  moreArgs, exec,proc_num, quiet = FALSE){
+  moreArgs, exec, proc_num, quiet = FALSE){
 
   perl.call <- paste("perl", paste(exec, "www/Guidance/guidance.pl" , sep=""))
   t <- system(perl.call, ignore.stderr = TRUE)
