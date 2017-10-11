@@ -4,64 +4,28 @@
 \alias{guidance}
 \title{GUIDetree-based AligNment ConficencE}
 \usage{
-guidance(sequences, msa.program = "mafft", exec, bootstrap = 100,
-  col.cutoff = "auto", seq.cutoff = "auto", mask.cutoff = "auto",
-  parallel = FALSE, ncore = "auto", method = "auto", alt.msas.file,
-  nj.program)
+guidance(sequences, msa.exec = "/usr/local/bin/mafft", bootstrap = 100,
+  ncore = 1, method = "auto", store_msas = FALSE)
 }
 \arguments{
-\item{sequences}{An object of class \code{\link{DNAbin}} or
+\item{sequences}{object of class \code{\link{DNAbin}} or
 \code{\link{AAbin}} containing unaligned sequences of DNA or amino acids.}
 
-\item{msa.program}{A charcter string giving the name of the MSA program,
-currelty one of c("mafft", "muscle", "clustalo", "clustalw2"); MAFFT is
-default}
+\item{msa.exec}{character string giving the path to the executable of the
+alignment program (e.g. "/usr/local/bin/mafft"); Must be on of: 'mafft', 'muscle', 'clustalo', 'clustalw2'}
 
-\item{exec}{A character string giving the path to the executable of the
-alignment program.}
+\item{bootstrap}{integer giving the number of alternative MSAs to be computed}
 
-\item{bootstrap}{An integer giving the number of perturbated MSAs.}
+\item{ncore}{integer specifying the number of cores; default = 1 (serial), "auto" can be used for automated usage of all detected cores}
 
-\item{col.cutoff}{numberic between 0 and 1; specifies a cutoff to remove
-unreliable columns below the cutoff; either user supplied or \code{"auto"}
-(0.73)}
-
-\item{seq.cutoff}{numberic between 0 and 1; specifies a cutoff to remove
-unreliable sequences below the cutoff; either user supplied of
-\code{"auto"} (0.5)}
-
-\item{mask.cutoff}{specific residues below a certain cutoff are masked ('N'
-for DNA, 'X' for AA); either user supplied or \code{"auto"} (0.5)}
-
-\item{parallel}{logical, if TRUE, specify the number of cores}
-
-\item{ncore}{number of cores (default is maxinum of local threads)}
-
-\item{method}{further arguments passed to mafft, default is \code{"auto"}}
-
-\item{nj.program}{specify if R functions or SEMPHY should be used for guide-tree estimation}
+\item{method}{further argument passed to mafft, default is \code{"auto"}}
 }
 \value{
-list containing following scores and alignments:
+object of class \code{polenta}:
 
-mean_scores residue pair score and mean column score
+msa original MSA as computed by \code{msa.program}
 
-column_score
-
-residue_column_score GUIDANCE score
-
-residue_pair_residue_score
-
-residual_pair_sequence_pair_score
-
-residual_pair_sequence_score
-
-residue_pair_score
-
-base_msa
-
-guidance_msa is the base_MSA removed from unreliable
-  residues/columns/sequences below cutoffs
+scores residue pair score
 }
 \description{
 MSA reliability assessment GUIDANCE (Penn et al. 2010)
@@ -75,36 +39,12 @@ Calculates column confidence (and other scors) by comparing
 }
 \examples{
 \dontrun{
-# first run GUIDANCE on example data using MAFFT
-file <- system.file("extdata", "BB50009.fasta", package = "rpg")
+# run GUIDANCE on example data using MAFFT
+file <- system.file("extdata", "BB50009.fasta", package = "polenta")
 aa_seq<- read.fas(file)
-g_msa <- guidance(sequences = aa_seq,
-msa.program = "mafft",
-exec = "/usr/local/bin/mafft",
-bootstrap = 100,
-parallel = FALSE,
-method = "retree 1")
-h.p <- confidence.heatmap(g_msa, title = "GUIDANCE BB50009 benchmark",
-legend = TRUE,guidance_score = TRUE)
-h.p
-# again with Muscle
-g_msa_m <- guidance(sequences = aa_seq,
-msa.program = "muscle",
-exec = "/Applications/muscle",
-bootstrap = 100,
-parallel = FALSE,
-method = "retree 1")
-h.p <- confidence.heatmap(g_msa_m, title = "GUIDANCE BB50009 benchmark",
-legend = TRUE,guidance_score = TRUE)
-h.p
-
-## Plot both for comparison
-h.p.mafft <- confidence.heatmap(g_msa, title = "MAFFT",
-legend = FALSE, guidance_score = FALSE)
-h.p.muscle <- confidence.heatmap(g_msa_m, title = "MUSCLE",
-legend = FALSE, guidance_score = FALSE)
-library(cowplot)
-plot_grid(h.p.mafft, h.p.muscle, ncol = 1, nrow = 2)
+g_res <- guidance(sequences = aa_seq)
+scores <- daughter_scores(g_res, score = c("gcsc", "rprsc"))
+hist(scores$gcsc$score, xlab = "Column score", main = "GUIDANCE")
 }
 
 }
@@ -120,11 +60,9 @@ G. Landan and D. Graur (2008). Local reliability measures from
   sets of co-optimal multiple sequencesuence alignments. 13:15--24
 }
 \seealso{
-\code{\link{compareMSAs}}, \code{\link{guidance2}},
+\code{\link{msa_set_scoreR}}, \code{\link{guidance2}},
   \code{\link{HoT}}
 }
 \author{
 Franz-Sebastian Krah
-
-Christoph Heibl
 }

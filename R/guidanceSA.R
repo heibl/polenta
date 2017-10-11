@@ -1,13 +1,52 @@
+## This code is part of the polenta package
+## © F.-S. Krah (last update 2017-08-18)
+
+#' Interface to guidance program
+#'
+#' @param sequences An object of class \code{\link{DNAbin}} or
+#'   \code{\link{AAbin}} containing unaligned sequences of DNA or amino acids.
+#' @param parallel logical, if TRUE, specify the number of cores
+#' @param ncore number of cores (default is maxinum of local threads)
+#' @param bootstrap An integer giving the number of perturbated MSAs.
+#' @param msa.program A charcter string giving the name of the MSA program,
+#'   currelty one of c("mafft", "muscle", "clustalo", "clustalw2"); MAFFT is
+#'   default
+#' @param proc_num number of cores
+#' @param quiet logical if TRUE, progress is printed to console
+#' @param program character, one of c("guidance", "guidance2", "HoT")
+#' @param exec path to guidance program folder, e.g. "/Applications/guidance.v2.02/"
+#' @return list containing following scores and alignments:
+#' @return mean_scores residue pair score and mean column score
+#' @return column_score
+#' @return residue_column_score GUIDANCE score
+#' @return residue_pair_residue_score
+#' @return residual_pair_sequence_pair_score
+#' @return residual_pair_sequence_score
+#' @return residue_pair_score
+#' @return base_msa
+#' @return guidance_msa is the base_MSA removed from unreliable
+#'   residues/columns/sequences below cutoffs
+#'
 #' @import stringr
 #' @import useful
 #' @import foreach
 #' @import ips
+#'
+#' @author Franz-Sebastian Krah
+#'
 #' @export
 #'
 
 guidanceSA <- function(sequences, msa.program, programm,
   bootstrap, gencode, outorder, msafile, cutoff= 0.93,
-  moreArgs, guidance_dir,proc_num, quiet = FALSE){
+  moreArgs, exec, proc_num, quiet = FALSE){
+
+  perl.call <- paste("perl", paste(exec, "www/Guidance/guidance.pl" , sep=""))
+  t <- system(perl.call, ignore.stderr = TRUE)
+  if(t == 2){
+    stop("GUIDANCE is not responding!")
+  }
+
 
   if (!inherits(sequences, c("DNAbin", "AAbin")))
     stop("sequences not of class DNAbin or AAbin (ape)")
@@ -18,9 +57,6 @@ guidanceSA <- function(sequences, msa.program, programm,
     type <- "nuc"
   if(type == "AA")
     type <- "aa"
-
-  if(missing(guidance_dir))
-    guidance_dir <- "/Applications/guidance.v2.02/"
 
   fns <- vector(length = 1)
   for (i in seq_along(fns))
@@ -71,7 +107,6 @@ guidanceSA <- function(sequences, msa.program, programm,
 
   guidance.call <- paste(seqFile, msa.program, seqType,
     outDir, programm, bootstraps, moreArgs)
-  perl.call <- paste("perl", paste(guidance_dir, "www/Guidance/guidance.pl" , sep=""))
   guidance.call <- paste(perl.call, guidance.call)
   ## CALL
   if(quiet){
@@ -122,11 +157,11 @@ guidanceSA <- function(sequences, msa.program, programm,
 
   # base.msa
   base <- files[grep("MSA.MAFFT.aln.With_Names", files)]
-  base.msa <- read.fas(base, type =type)
+  base.msa <- read.fas(base)
 
   # guidance.msa
   guidance.msa <- files[grep("Without_low_SP_Col.With_Names", files)]
-  guidance.msa <- read.fas(guidance.msa, type =type)
+  guidance.msa <- read.fas(guidance.msa)
 
   ## delete temp files
   unlink(fns[file.exists(fns)], recursive = TRUE)

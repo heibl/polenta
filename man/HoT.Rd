@@ -4,54 +4,28 @@
 \alias{HoT}
 \title{Heads or Tails alignment reliability}
 \usage{
-HoT(sequences, msa.program = "mafft", exec, type, n.coopt = "auto",
-  col.cutoff = "auto", seq.cutoff = "auto", mask.cutoff = "auto",
-  parallel = FALSE, ncore = "auto", method = "auto", plot_guide = TRUE,
-  alt.msas.file)
+HoT(sequences, msa.exec = "/usr/local/bin/mafft", n.coopt = "auto",
+  ncore = 1, method = "auto", plot_guide = TRUE, store_msas = FALSE)
 }
 \arguments{
-\item{sequences}{An object of class \code{\link{DNAbin}} or \code{\link{AAbin}}
-containing unaligned sequences of DNA or amino acids.
-@param cutoff specifies a cutoff to remove unreliable columns below the cutoff}
+\item{sequences}{object of class \code{\link{DNAbin}} or
+\code{\link{AAbin}} containing unaligned sequences of DNA or amino acids.}
 
-\item{msa.program}{A charcter string giving the name of the MSA program,
-one of c("mafft", "muscle", "clustalo", "clustalw2"); MAFFT is default}
+\item{msa.exec}{character string giving the path to the executable of the
+alignment program (e.g. "/usr/local/bin/mafft"); Must be on of: 'mafft', 'muscle', 'clustalo', 'clustalw2'}
 
-\item{exec}{A character string giving the path to the executable of the
-alignment program.}
+\item{ncore}{integer specifying the number of cores; default = 1 (serial), "auto" can be used for automated usage of all detected cores}
 
-\item{col.cutoff}{numberic between 0 and 1; specifies a cutoff to remove unreliable columns below the cutoff; either user supplied or "auto" (0.73)}
+\item{method}{further argument passed to mafft, default is \code{"auto"}}
 
-\item{seq.cutoff}{numberic between 0 and 1; specifies a cutoff to remove unreliable sequences below the cutoff; either user supplied of "auto" (0.5)}
-
-\item{mask.cutoff}{specific residues below a certain cutoff are masked ('N' for DNA, 'X' for AA); either user supplied of "auto" (0.5)}
-
-\item{parallel}{logical, if TRUE, specify the number of cores}
-
-\item{ncore}{number of cores (default is 'auto')}
-
-\item{method}{further arguments passed to MAFFT, default is "auto"}
+\item{bootstrap}{integer giving the number of alternative MSAs to be computed}
 }
 \value{
-list containing following scores and alignments:
+object of class \code{polenta}:
 
-mean_scores residue pair score and mean column score
+msa original MSA as computed by \code{msa.program}
 
-column_score
-
-residue_column_score column reliability
-
-residue_pair_residue_score
-
-residual_pair_sequence_pair_score
-
-residual_pair_sequence_score
-
-residue_pair_score
-
-base_msa
-
-HoT_msa is the base_MSA removed from unreliable residues/columns/sequences below cutoffs
+scores residue pair score
 }
 \description{
 MSA reliability assessment HoT (Landan and Graur 2008)
@@ -64,10 +38,8 @@ Calculates column reliability (and other scors) by comparing alternative
 G. Landan and D. Graur (2008). Local reliability measures from sets of co-optimal multiple sequencesuence alignments. 13:15--24
 }
 \seealso{
-\code{\link{compareMSAs}}, \code{\link{guidance}}, \code{\link{guidance2}}
+\code{\link{msa_set_scoreR}}, \code{\link{guidance}}, \code{\link{guidance2}}
 }
 \author{
 Franz-Sebastian Krah
-
-Christoph Heibl
 }

@@ -1,5 +1,5 @@
 ## This code is part of the polenta package
-## © F.-S. Krah, C. Heibl 2017 (last update 2017-05-26)
+## © F.-S. Krah (last update 2017-08-17)
 
 #' Compare reference MSAs with alternative MSAs
 #'
@@ -7,8 +7,7 @@
 #'
 #' @param ref of class data.frame, is the reference MSA ('BASE MSA') with
 #'   sequences as columns
-#' @param com like ref, but 1 alternative MSA
-#' @param dir_path directory with multiple alternative MSA files
+#' @param alt path to alternative files
 #'
 #' @return list containing following scores:
 #' @return mean_scores: residue pair score and mean column score
@@ -47,56 +46,47 @@
 #' @seealso \code{\link{guidance}}, \code{\link{guidance2}}, \code{\link{HoT}}
 #' @export
 
-compareMSAs_src <- function(ref, com, dir_path){
-
-  if (!inherits(ref, c("AAbin", "DNAbin")))
-    stop("ref not of class AAbin or DNAbin")
+msa_set_scoreSA <- function(ref, alt, exec = "/Users/krah/Documents/R/pkgs/polenta/src/msa_set_score_src/msa_set_score", bootstrap){
 
   # create temporary dir with temporary fasta files
-  fns <- vector(length = 2)
+  fns <- vector(length = 1)
   rn <- format(runif(1, 1, 100000), digits = 0, scientific = FALSE)
-  for (i in seq_along(fns))
-    fns[i] <- tempfile(pattern = paste0("run", rn), tmpdir = tempdir(), fileext = ".fas")
+  fns <- tempfile(pattern = paste0("run", rn), tmpdir = tempdir(), fileext = ".fas")
   unlink(fns[file.exists(fns)])
+
+  if(!is.character(alt)){
+    cat("list was supplied: writing MSAs to temporary files")
+    dir.create(paste(tempdir(), "alt", sep = "/"))
+    dir <- paste(tempdir(), "alt", sep = "/")
+    msa_out <- vector(length = bootstrap)
+    for (i in seq_along(msa))
+      msa_out[i] <- tempfile(pattern = "mafft", tmpdir = dir, fileext = ".fas")
+    unlink(msa_out[file.exists(msa_out)])
+
+    for(i in 1:bootstrap)
+      write.fas(msa[[i]], file = msa_out[i])
+
+    write.fas(ref, fns[1])
+    system(paste(exec, fns[1], paste0(tempdir(), "/alt"), "-d", dir),
+      intern = TRUE, ignore.stdout = FALSE)
+  }
 
   ## Where is the executable? This will be obsolete when our own
   ## C code will be called.
-  exec <- "/Users/heibl/Documents/r/pkgs/polenta/src/msa_set_score_src/msa_set_score"
-
-  if (is.null(com)){
-
-    if (!dir.exists(dir_path))
+  # exec <- "/Users/heibl/Documents/r/pkgs/polenta/src/msa_set_score_src/msa_set_score"
+  else{
+    if (!dir.exists(alt))
       stop("directory not found")
 
     write.fas(ref, fns[1])
-    system(paste(exec, fns[1], paste0(tempdir(), "/GUIDANCE"), "-d", dir_path),
-           intern = TRUE, ignore.stdout = FALSE)
-
-    ## read program putput which is in temp dir
-    files <-  list.files(tempdir(), full.names = TRUE)
-    read <- files[grep("GUIDANCE", files)]
-
-  } else {
-
-    if (!inherits(com, c("AAbin", "DNAbin")))
-      stop("ref not of class AAbin or DNAbin")
-
-    # store fasta files in temp files
-    # rownames(ref) <- paste0("S", 1:dim(ref)[1])
-    # rownames(com) <- paste0("S", 1:dim(com)[1])
-
-    write.fas(ref, file = fns[1])
-    write.fas(com, file = fns[2])
-
-    ## call program msa_set_score in R package folder src/msa_set_score_src
-    system(paste(exec, fns[1], paste(tempdir(), rn, sep = "/"), "-m", fns[2]),
-           intern = FALSE, ignore.stdout = TRUE)
-
-    ## read program output which is in temp dir
-    files <-  list.files(tempdir(), full.names = TRUE)
-    files <- files[grep(rn, files)]
-    read <- files[-grep("\\.fas", files)]
+    dir <- tempdir()
+    system(paste(exec, fns[1], alt, "-d", dir),
+      intern = TRUE, ignore.stdout = FALSE)
   }
+
+  ## read program putput which is in temp dir
+  files <-  list.files(tempdir(), full.names = TRUE)
+  read <- files[grep("alt", files)]
 
   ## Scores
   # Column score

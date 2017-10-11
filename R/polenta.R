@@ -1,10 +1,10 @@
 ## This code is part of the polenta package
-## © C. Heibl 2016 (last update 2017-05-27)
+## © C. Heibl 2017, F.-S. Krah (last update 2017-08-18)
 
 #' @title Ultra-Large Multiple Sequence Alignment with PASTA
 #' @description Provides a complete reimplementation of the PASTA algorithm
 #'   (Mirarab, Nguyen, and Warnow 2014) in R.
-#' @param seqs An object of class \code{\link{DNAbin}} or \code{\link{AAbin}} 
+#' @param seqs An object of class \code{\link{DNAbin}} or \code{\link{AAbin}}
 #'   containing unaligned sequences of DNA or amino acids.
 #' @param gt \emph{Currently unused.}
 #' @param k An integer giving the size of cluster in which the dataset is split.
@@ -22,29 +22,29 @@
 #' @importFrom ips mafft mafft.merge
 #' @export
 
-polenta <- function(seqs, gt, k = 200, bootstrap = 100, 
-                    msa.program = "mafft", method = "auto", exec, 
+polenta <- function(seqs, gt, k = 200, bootstrap = 100,
+                    msa.program = "mafft", method = "auto", exec,
                     parallel = FALSE, ncore){
-  
+
   ## remove gaps from aligned sequences
   ## ----------------------------------
   if (is.matrix(seqs)) {
     seqs <- del.gaps(seqs)
   }
-  
+
   ## less than k species will be aligned with MAFFT-LINSI
   ## ----------------------------------------------------
   if (length(seqs) <= k){
     cat(length(seqs), "species will be aligned with MAFFT L-INS-i\n")
-    
+
     seqs <- guidance(seqs, parallel = parallel, ncore = ncore,
                      bootstrap = bootstrap, msa.program = msa.program,
                      method = method, exec = exec)
-    
+
     ## more than k species will be aligned with PASTA
     ## ----------------------------------------------
   } else {
-    
+
     ## This is a quick hack to get an inital guide tree
     ## Should be replaced by the method used by Mirarab and Warnow
     ## or perhaps a hybrid with taxonomy.
@@ -57,13 +57,13 @@ polenta <- function(seqs, gt, k = 200, bootstrap = 100,
       }
       gt <- nj(gt)
     }
-    
+
     ## split dataset in subsets of size <= k
     ## -------------------------------------
     subtrees <- centroidDecomposition(gt, k = k)
     subtrees <- lapply(subtrees, function(z) z$tip.label)
     names(subtrees) <- paste0("S", seq_along(subtrees))
-    
+
     ## alignment of subtrees
     ## ---------------------
     foo <- function(seqs, taxa){
@@ -73,22 +73,22 @@ polenta <- function(seqs, gt, k = 200, bootstrap = 100,
     }
     seqs <- lapply(subtrees, foo, seqs = seqs)
     names(seqs) <- names(subtrees)
-    
-    ## special case: there are only two subMSAa and the will be simply merged
+
+    ## special case: there are only two subMSAa and they will be simply merged
     ## with out transitivity merging
     if (length(seqs) == 2){
-      
+
       seqlist <- extractMSA(seqs)
       seqlist <- list(mafft.merge(seqlist, method = method, exec = exec))
       names(seqlist) <- paste(names(seqs), collapse = "-")
       seqs <- reappendScores(names(seqs), merged = seqlist, scored = seqs)
-      
+
     } else {
       ## compute spanning tree of subsets
       ## --------------------------------
       st <- spanningTree(gt, subtrees)
       # save.image("devworkspace.rda")
-      
+
       ## do profile-alignment
       ## --------------------
       e <- as_edgelist(st)
@@ -98,19 +98,19 @@ polenta <- function(seqs, gt, k = 200, bootstrap = 100,
       seqlist <- extractMSA(seqs)
       seqlist <- apply(e, 1, merger, seqlist = seqlist, exec = exec)
       names(seqlist) <- paste(e[, 1], e[, 2], sep = "-")
-      
+
       ## reappend scores to merged alignments
       ## ------------------------------------
       seqs <- apply(e, 1, reappendScores, merged = seqlist, scored = seqs)
       names(seqs) <- paste(e[, 1], e[, 2], sep = "-")
-      
+
       ## do transitivity merging
       ## -----------------------
       # load("devworkspace.rda")
-      
+
       ## calculate pairings for transitivity merging
       ## this is probably very inefficient
-      
+
       vertex.set <- strsplit(names(seqs), "-")
       pairings <- function(z){
         obj <- list(); meta <- list()
@@ -133,15 +133,15 @@ polenta <- function(seqs, gt, k = 200, bootstrap = 100,
         vertex.set <- attr(p, "vertices")
       }
       seqs <- seqs[[1]]
-      
+
       ## next steps
       ## - put pairing() in its on file
       ## - testing
       ## - parallelisation
       ## - make pairing more efficient
-      
+
       # save.image("devworkspace.rda")
-      
+
     }
   }
   seqs
