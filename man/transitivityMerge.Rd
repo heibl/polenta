@@ -4,15 +4,23 @@
 \alias{transitivityMerge}
 \title{Transitivity Merge}
 \usage{
-transitivityMerge(x, id = c(1, 2))
+transitivityMerge(x, id = c(1, 2), exec)
 }
 \arguments{
 \item{x}{A list containing objects of class \code{\link{polentaDNA}}.}
+
+\item{id}{An integer vector of length 2 indicating the two elements of 
+\code{x} that will be merged.}
+
+\item{exec}{A character string giving the path to the alignment program 
+executable. This alignment program is only used to merge leading and
+trailing positions in the two MSAa that have no shared sequences. All other
+positions are merged by transitivity.}
 }
 \value{
 An object of class \code{\link{polentaDNA}}.
 }
 \description{
-Merges two multiple sequence alignments and their reliability scores using the transitivity
-  criterion.
+Merges two multiple sequence alignments and their reliability 
+  scores using the transitivity criterion.
 }

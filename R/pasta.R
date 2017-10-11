@@ -73,9 +73,7 @@ pasta <- function(seqs, gt, k = 200,
     ## alignment of subtrees
     ## ---------------------
     cat("Alignment of", length(seqs), "subtrees\n")
-    foo <- function(seqs, taxa){
-      seqs <- mafft(seqs, method = "localpair", gt = gt, exec = exec)
-    }
+    s <- lapply(seqs[2], mafft, exec = exec)
     pb <- txtProgressBar(max = length(seqs), style = 3)
     progress <- function(n) setTxtProgressBar(pb, n)
     opts <- list(progress = progress)
@@ -139,7 +137,7 @@ pasta <- function(seqs, gt, k = 200,
       seqs <- foreach(i = 1:length(p),
                       .packages = c('ips', 'ape'),
                       .options.snow = opts)  %dopar% {
-                        transitivityMerge(x = seqs, id = p[[i]])
+                        transitivityMerge(x = seqs, id = p[[i]], exec = exec)
                       }
       vertex.set <- attr(p, "vertices")
     }

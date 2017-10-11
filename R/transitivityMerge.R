@@ -3,14 +3,20 @@
 
 
 #' @title Transitivity Merge
-#' @description Merges two multiple sequence alignments and their reliability scores using the transitivity
-#'   criterion.
+#' @description Merges two multiple sequence alignments and their reliability 
+#'   scores using the transitivity criterion.
 #' @param x A list containing objects of class \code{\link{polentaDNA}}.
+#' @param id An integer vector of length 2 indicating the two elements of 
+#'   \code{x} that will be merged.
+#' @param exec A character string giving the path to the alignment program 
+#'   executable. This alignment program is only used to merge leading and
+#'   trailing positions in the two MSAa that have no shared sequences. All other
+#'   positions are merged by transitivity.
 #' @return An object of class \code{\link{polentaDNA}}.
 #' @importFrom ape as.DNAbin cbind.DNAbin rbind.DNAbin
 #' @export
 
-transitivityMerge <- function(x, id = c(1, 2)){
+transitivityMerge <- function(x, id = c(1, 2), exec){
 
   include_scores <- inherits(x[[1]], "polentaDNA")
   

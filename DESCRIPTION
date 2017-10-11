@@ -26,6 +26,7 @@ Imports:
  phytools,
  plyr,
  Rcpp (>= 0.12.9),
+ RcppParallel,
  scales,
  stringr,
  useful,
@@ -38,7 +39,6 @@ Collate:
     'HoT.R'
     'HoT_in_GUIDANCE2.R'
     'RPS.R'
-    'RcppExports.R'
     'cAAbin.R'
     'centroidDecomposition.R'
     'clustalo.R'
