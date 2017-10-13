@@ -1,10 +1,17 @@
 ## This code is part of the polenta package
-## © F.-S. Krah (last update 2017-08-17)
+## © F.-S. Krah (last update 2017-10-13)
 
-#' Compare reference MSAs with alternative MSAs
-#'
-#' @description MSA reliability scores (Penn et al. 2010)
-#'
+#' @title Compare Reference MSAs with Alternative MSAs
+#' @description Wrapper function for program msa_set_score v2.01 of the GUIDANCE
+#'   program (see reference). Copyright: To modify the code, or use parts of it
+#'   for other purposes, permission should be requested. Please contact Tal
+#'   Pupko: talp@post.tau.ac.il. Please note that the use of the GUIDANCE
+#'   program is for academic use only. C code computing basic MSA comparision.
+#'   The most basic is the residue pairs residue score, which checks if residue
+#'   pairs combinations are correctly aligned in both MSAs. From this the
+#'   residue score, residue column score (GUIDANCE score), residue sequence
+#'   score are computed. It also calulates the column score (CS), which simply
+#'   checks if a column is identically aligned in the alternative MSA.
 #' @param ref of class data.frame, is the reference MSA ('BASE MSA') with
 #'   sequences as columns
 #' @param alt path to alternative files
@@ -32,18 +39,13 @@
 #'   averages are computed.
 #' @return residual_pair_sequence_score: like the residue_column_score but for
 #'   sequences
-
-#'
-#' @description Wrapper function for program msa_set_score v2.01 of the GUIDANCE program (see reference). Copyright: To modify the code, or use parts of it for other purposes, permission should be requested. Please contact Tal Pupko: talp@post.tau.ac.il. Please note that the use of the GUIDANCE program is for academic use only.
-#' @description C code computing basic MSA comparision. The most basic is the residue pairs residue score, which checks if residue pairs combinations are correctly aligned in both MSAs. From this the residue score, residue column score (GUIDANCE score), residue sequence score are computed. It also calulates the column score (CS), which simply checks if a column is identically aligned in the alternative MSA.
 #' @references Penn et al. (2010). An alignment confidence score capturing
 #'   robustness to guide tree uncertainty. Molecular Biology and Evolution
-#'   27:1759--1767
-#'
+#'   27:1759--1767.
 #' @author Franz-Sebastian Krah
-#' @import plyr
-#'
 #' @seealso \code{\link{guidance}}, \code{\link{guidance2}}, \code{\link{HoT}}
+#' @import plyr
+#' @importFrom stats runif
 #' @export
 
 msa_set_scoreSA <- function(ref, alt, exec = "/Users/krah/Documents/R/pkgs/polenta/src/msa_set_score_src/msa_set_score", bootstrap){
@@ -59,7 +61,7 @@ msa_set_scoreSA <- function(ref, alt, exec = "/Users/krah/Documents/R/pkgs/polen
     dir.create(paste(tempdir(), "alt", sep = "/"))
     dir <- paste(tempdir(), "alt", sep = "/")
     msa_out <- vector(length = bootstrap)
-    for (i in seq_along(msa))
+    for (i in seq_along(msa_out))
       msa_out[i] <- tempfile(pattern = "mafft", tmpdir = dir, fileext = ".fas")
     unlink(msa_out[file.exists(msa_out)])
 
@@ -68,7 +70,7 @@ msa_set_scoreSA <- function(ref, alt, exec = "/Users/krah/Documents/R/pkgs/polen
 
     write.fas(ref, fns[1])
     system(paste(exec, fns[1], paste0(tempdir(), "/alt"), "-d", dir),
-      intern = TRUE, ignore.stdout = FALSE)
+           intern = TRUE, ignore.stdout = FALSE)
   }
 
   ## Where is the executable? This will be obsolete when our own
@@ -81,7 +83,7 @@ msa_set_scoreSA <- function(ref, alt, exec = "/Users/krah/Documents/R/pkgs/polen
     write.fas(ref, fns[1])
     dir <- tempdir()
     system(paste(exec, fns[1], alt, "-d", dir),
-      intern = TRUE, ignore.stdout = FALSE)
+           intern = TRUE, ignore.stdout = FALSE)
   }
 
   ## read program putput which is in temp dir
@@ -135,12 +137,12 @@ msa_set_scoreSA <- function(ref, alt, exec = "/Users/krah/Documents/R/pkgs/polen
 
   # output
   res <- list(score_means = msc,
-    column_score = CS,
-    residue_pair_column_score = g.sc,
-    residue_pair_residue_score = rpr.sc,
-    residual_pair_sequence_pair_score  = rpsp.sc,
-    residual_pair_sequence_score = rps.sc,
-    residue_pair_score = rp.sc)
+              column_score = CS,
+              residue_pair_column_score = g.sc,
+              residue_pair_residue_score = rpr.sc,
+              residual_pair_sequence_pair_score  = rpsp.sc,
+              residual_pair_sequence_score = rps.sc,
+              residue_pair_score = rp.sc)
 
   return(res)
 }

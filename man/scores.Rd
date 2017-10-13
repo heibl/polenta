@@ -2,7 +2,7 @@
 % Please edit documentation in R/scores.R
 \name{scores}
 \alias{scores}
-\title{Calculate additional scores based on residue pair score}
+\title{Score Calculation}
 \usage{
 scores(polenta, score = c("alignment", "column", "residue", "sequence"),
   na.rm = TRUE)
@@ -10,27 +10,41 @@ scores(polenta, score = c("alignment", "column", "residue", "sequence"),
 \arguments{
 \item{polenta}{object of class \code{\link{polenta}}}
 
-\item{score}{character, currently c("column", "residue", "alignment", "sequence")}
+\item{score}{A character string indicating a type of score, currently
+available \code{"column"}, \code{"residue"}, \code{"alignment"},
+\code{"sequence"}, \code{"all"}.}
+
+\item{na.rm}{Logical, indicating if NA should be removed.}
 }
 \value{
 data.frame or list of data.frames with scores
 }
 \description{
-Calculate additional scores based on residue pair score
+Calculate additional scores based on residue pair score.
 }
 \details{
-The score 'column' is the GUIDANCE column score which is the mean of the residue pair residue score across columns. The score 'alignment' is the mean across the residue pair residue scores. The score 'sequence' is the mean of the residue pair score across rows (sequences). The score 'residue' is the mean score across the residue pairs with that residue (residue pair score).
+The score 'column' is the GUIDANCE column score which is the mean of
+  the residue pair residue score across columns. The score 'alignment' is the
+  mean across the residue pair residue scores. The score 'sequence' is the
+  mean of the residue pair score across rows (sequences). The score 'residue'
+  is the mean score across the residue pairs with that residue (residue pair
+  score).
 
-The GUIDANCE column score can be utilized to weight characters in RAxML (flag -a). Simple removal of sites from the MSA should be done with cautions (Tan et al. 2015).
+The GUIDANCE column score can be utilized to weight characters in
+  RAxML (flag -a). Simple removal of sites from the MSA should be done with
+  cautions (Tan et al. 2015).
 }
 \references{
 Penn et al. (2010). An alignment confidence score capturing
   robustness to guide tree uncertainty. Molecular Biology and Evolution
-  27:1759--1767
+  27:1759--1767.
 
-Tan et al. (2015). Current methods for automated filtering of multiple
-  sequence alignments frequently worsen single-gene phylogenetic inference. Systematic
-  biology 64:778--791
+Tan et al. (2015). Current methods for automated filtering of
+  multiple sequence alignments frequently worsen single-gene phylogenetic
+  inference. Systematic biology 64:778--791.
+}
+\seealso{
+\code{\link{filterMSA}}
 }
 \author{
 Franz-Sebastian Krah

@@ -13,7 +13,7 @@ msa_set_scoreR(ref, alt)
 
 \item{bootstrap}{number of alt MSAs}
 
-\item{na.rm}{logical if gab comparisons should be deleted}
+\item{na.rm}{logical if gap comparisons should be deleted}
 }
 \value{
 matrix containing following scores:

@@ -7,8 +7,7 @@
 \alias{polenta}
 \title{polenta: PASTA Optimal confidENce Transivitiy Alignment}
 \usage{
-polenta(seqs, gt, k = 200, bootstrap = 100, msa.program = "mafft",
-  method = "auto", exec, parallel = FALSE, ncore)
+polenta(seqs, gt, k = 200, bootstrap = 100, method = "auto", exec, ncore)
 }
 \arguments{
 \item{seqs}{An object of class \code{\link{DNAbin}} or \code{\link{AAbin}}
@@ -20,14 +19,11 @@ containing unaligned sequences of DNA or amino acids.}
 
 \item{bootstrap}{An integer giving the number of bootstrap replicates.}
 
-\item{msa.program}{A character string giving the alignment program to use;
-currently only \code{"mafft"} is possible.}
+\item{method}{A character string choosing a method of the alignment program;
+see \code{\link{mafft}} for possible options.}
 
-\item{method}{A character string choosing a method of the alignment program; see \code{\link{mafft}} for possible options.}
-
-\item{exec}{A character string giving the path to the alignment program executable.}
-
-\item{parallel}{Logical, indicating if the function should be run in parallel or serial mode.}
+\item{exec}{A character string giving the path to the alignment program
+executable.}
 
 \item{ncore}{An integer giving the number of cores to use in parallel mode.}
 }

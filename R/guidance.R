@@ -1,16 +1,18 @@
 ## This code is part of the polenta package
-## © F.-S. Krah (last update 2017-08-18)
+## © F.-S. Krah (last update 2017-10-13)
 
 #' GUIDetree-based AligNment ConficencE
 #'
 #' @description MSA reliability assessment GUIDANCE (Penn et al. 2010)
 #'
-#' @param sequences object of class \code{\link{DNAbin}} or
-#'   \code{\link{AAbin}} containing unaligned sequences of DNA or amino acids.
-#' @param ncore integer specifying the number of cores; default = 1 (serial), "auto" can be used for automated usage of all detected cores
+#' @param sequences object of class \code{\link{DNAbin}} or \code{\link{AAbin}}
+#'   containing unaligned sequences of DNA or amino acids.
+#' @param ncore integer specifying the number of cores; default = 1 (serial),
+#'   "auto" can be used for automated usage of all detected cores
 #' @param bootstrap integer giving the number of alternative MSAs to be computed
 #' @param msa.exec character string giving the path to the executable of the
-#'   alignment program (e.g. "/usr/local/bin/mafft"); Must be on of: 'mafft', 'muscle', 'clustalo', 'clustalw2'
+#'   alignment program (e.g. "/usr/local/bin/mafft"); Must be on of: 'mafft',
+#'   'muscle', 'clustalo', 'clustalw2'
 #' @param method further argument passed to mafft, default is \code{"auto"}
 #'
 #' @return object of class \code{polenta}:
@@ -55,11 +57,11 @@
 #' @export
 
 guidance <- function(sequences,
-  msa.exec = "/usr/local/bin/mafft",
-  bootstrap = 100,
-  ncore = 1,
-  method = "auto",
-  store_msas = FALSE){
+                     msa.exec = "/usr/local/bin/mafft",
+                     bootstrap = 100,
+                     ncore = 1,
+                     method = "auto",
+                     store_msas = FALSE){
 
   ##############################################
   ## SOME CHECKS
@@ -83,19 +85,19 @@ guidance <- function(sequences,
     os <- os[grep("sysname", names(os))]
     if (msa.program == "mafft") {
       msa.exec <- switch(os, Linux = "mafft", Darwin = "mafft",
-        Windows = "mafft.bat")
+                         Windows = "mafft.bat")
     }
     if (msa.program == "muscle") {
       msa.exec <- switch(os, Linux = "muscle", Darwin = "muscle",
-        Windows = "muscle3.8.31_i86win32.exe")
+                         Windows = "muscle3.8.31_i86win32.exe")
     }
     if (msa.program == "clustalo") {
       msa.exec <- switch(os, Linux = "clustalo", Darwin = "clustalo",
-        Windows = "clustalo.exe")
+                         Windows = "clustalo.exe")
     }
     if (msa.program == "clustalw2") {
       msa.exec <- switch(os, Linux = "clustalw", Darwin = "clustalw2",
-        Windows = "clustalw2.exe")
+                         Windows = "clustalw2.exe")
     }
   }
   out <- system(paste(msa.exec, "--v"), ignore.stdout = TRUE, ignore.stderr = TRUE)
@@ -132,8 +134,8 @@ guidance <- function(sequences,
   { mafft_method <- ", method = method" }else{ mafft_method <- "" }
 
   base.msa <- paste(msa.program, "(",
-    "x = sequences, exec = msa.exec",
-    mafft_method, ")", sep = "")
+                    "x = sequences, exec = msa.exec",
+                    mafft_method, ")", sep = "")
 
   ## Make alignment
   base.msa <- eval(parse(text = base.msa))
@@ -152,10 +154,10 @@ guidance <- function(sequences,
   registerDoSNOW(cl)
 
   nj.guide.trees <- foreach(i = 1:bootstrap,
-    .options.snow = opts,
-    .packages = "phangorn", .export = 'msaBP_nj_tree') %dopar% {
-      msaBP_nj_tree(base.msa, outgroup = "auto")
-    }
+                            .options.snow = opts,
+                            .packages = "phangorn", .export = 'msaBP_nj_tree') %dopar% {
+                              msaBP_nj_tree(base.msa, outgroup = "auto")
+                            }
   stopCluster(cl)
   close(pb)
 
@@ -169,7 +171,7 @@ guidance <- function(sequences,
     msa_out <- vector(length = bootstrap)
     for (i in seq_along(msa_out))
       msa_out[i] <- tempfile(pattern = "mafft",
-        tmpdir = tempdir(), fileext = ".fas")
+                             tmpdir = tempdir(), fileext = ".fas")
     unlink(msa_out[file.exists(msa_out)])
   }
 
@@ -182,8 +184,8 @@ guidance <- function(sequences,
   { intfile <- ", file = msa_out[i]" }else{ intfile <- "" }
 
   FUN <- function(i) {paste(msa.program, "(",
-    "x = sequences, gt = nj.guide.trees[[", i,"]], exec = msa.exec",
-    mafft_method, intfile, ")", sep = "")}
+                            "x = sequences, gt = nj.guide.trees[[", i,"]], exec = msa.exec",
+                            mafft_method, intfile, ")", sep = "")}
 
   ## loop
   bpb <- txtProgressBar(max = bootstrap, style = 3)
@@ -193,17 +195,17 @@ guidance <- function(sequences,
   registerDoSNOW(cl)
 
   alt.msa <- foreach(i = 1:bootstrap, .packages = c('ips', 'ape'),
-    .options.snow = opts,
-    .export = c("sequences", "nj.guide.trees", "msa.exec"))  %dopar% {
-      eval(parse(text = FUN(i)))
-    }
+                     .options.snow = opts,
+                     .export = c("sequences", "nj.guide.trees", "msa.exec"))  %dopar% {
+                       eval(parse(text = FUN(i)))
+                     }
 
   stopCluster(cl)
   close(pb)
 
   ## detele some unnecessary files
   mafft_created <- list.files(getwd(),
-    full.names = TRUE)[grep("tree.mafft", list.files(getwd()))]
+                              full.names = TRUE)[grep("tree.mafft", list.files(getwd()))]
   if (length(mafft_created)){
     file.remove(mafft_created)
   }
@@ -234,17 +236,17 @@ guidance <- function(sequences,
 
   ## Run msa_set_score
   # switch(score_method,
-    # "Rcpp" = {
-      ## Rcpp functions are called
-      score <- msa_set_scoreR(ref = base.msa,
-        alt = alt.msa)
-      # }
-    # "SA" = {
-    #   ## msa_set_score from GUIDANCE package is called
-    #   score <- msa_set_scoreSA(ref = base.msa,
-    #     alt = alt.msa,
-    #     bootstrap = bootstrap, exec = msa_set_score.exec)
-    # }
+  # "Rcpp" = {
+  ## Rcpp functions are called
+  score <- msa_set_scoreR(ref = base.msa,
+                          alt = alt.msa)
+  # }
+  # "SA" = {
+  #   ## msa_set_score from GUIDANCE package is called
+  #   score <- msa_set_scoreSA(ref = base.msa,
+  #     alt = alt.msa,
+  #     bootstrap = bootstrap, exec = msa_set_score.exec)
+  # }
   # )
   ### score comutation done
 
@@ -255,13 +257,13 @@ guidance <- function(sequences,
     files <- files[grep("HoT", files)]
     for (i in 1:(n.coopt*bootstrap)){
       file.rename(paste(tempdir(), files[i], sep = "/"),
-        paste(tempdir(), paste0("altMSA", i, ".fas"), sep = "/"))}
+                  paste(tempdir(), paste0("altMSA", i, ".fas"), sep = "/"))}
     files <- list.files(tempdir(), full.names = TRUE)
     files <- files[grep("altMSA*", files)]
     zip(zipfile = alt.msas.file, files = files)
 
-  # maybe use gzfile
-  # currently zip creates many wired subfolders
+    # maybe use gzfile
+    # currently zip creates many wired subfolders
   }
 
   ## Delete temporary files
@@ -275,9 +277,9 @@ guidance <- function(sequences,
   # if(score_method=="SA"){
   #   score <- score$residue_pair_score
   # }
-  if(inherits(sequences, "AAbin")){
+  if (inherits(sequences, "AAbin")){
     polentaAA(base.msa, score, "guidance")
-  }else{
+  } else {
     polentaDNA(base.msa, score, "guidance")
   }
 }

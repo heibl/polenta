@@ -1,5 +1,5 @@
 ## This code is part of the rpg package
-## © C. Heibl 2017 (last update 2017-06-07)
+## © C. Heibl 2017 (last update 2017-10-13)
 
 #' @title Spanning Tree for PASTA
 #' @description Creates miminum spanning tree connecting subsets obtained by
@@ -12,6 +12,7 @@
 #' @importFrom ips terminalSisters
 #' @importFrom igraph add_edges degree delete.vertices graph_from_edgelist
 #'   neighbors vertex_attr vertex_attr<-
+#' @importFrom utils head tail
 #' @export
 
 spanningTree <- function(phy, subtrees){
@@ -47,9 +48,9 @@ spanningTree <- function(phy, subtrees){
   phy$edge <- matrix(c(phy$tip.label, phy$node.label)[phy$edge], ncol = 2)
   phy <- graph_from_edgelist(phy$edge, directed = FALSE)
   repeat {
-    
+
     ## Choose one node (int) and identify one of its neighbors (n).
-    ## n will be deleted and 
+    ## n will be deleted and
     ## ----------------------------------------------------------
     vertex_names <- vertex_attr(phy)$name
     int <- sample(grep("Node", vertex_names), 1) ## choose a random internal node
@@ -58,12 +59,12 @@ spanningTree <- function(phy, subtrees){
     if (length(id)) n <- n[-id] ## consider only terminal neighbors
     if (!length(n)) next ## if no terminalnal neighbors, jump to next
     if (length(n)) n <- n[1] ## if there more terminal nodes, use the first
-    
+
     ## Handle nodes of degree 1
     if (degree(phy, n) == 1){
       phy <- delete.vertices(phy, n)
       vertex_attr(phy)$name[match(vertex_names[int], vertex_attr(phy)$name)] <- n
-      
+
     ## handle nodes of higher degree
     } else {
         nn <- vertex_attr(phy)$name[neighbors(phy, n)]

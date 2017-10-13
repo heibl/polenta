@@ -5,12 +5,12 @@
 #' @export
 
 clustalo <- function (x, y, gt, exec = NULL,MoreArgs = "",
-  quiet = TRUE, original.ordering = TRUE, file)
+                      quiet = TRUE, original.ordering = TRUE, file)
 {
   os <- Sys.info()[1]
   if (is.null(exec)) {
     exec <- switch(os, Linux = "clustalo", Darwin = "clustalo",
-      Windows = "clustalo.exe")
+                   Windows = "clustalo.exe")
   }
   if (missing(x)) {
     out <- system(paste(exec, "-h"))
@@ -59,7 +59,7 @@ clustalo <- function (x, y, gt, exec = NULL,MoreArgs = "",
     out <- system(paste(exec, opts), ignore.stdout = quiet)
     if (out == 127)
       stop(.errorAlignment(exec, "Clustal-Omega"))
-    res <- read.fas(fns[2], type =type)
+    res <- read.fas(fns[2])
     if (original.ordering)
       res <- res[labels(x), ]
     rownames(res) <- labels.bak
@@ -67,23 +67,23 @@ clustalo <- function (x, y, gt, exec = NULL,MoreArgs = "",
   }
 
 
-  if(!missing(y)){
+  if (!missing(y)){
     y <- as.list(y)
     labels.baky <- names(y)
     write.fas(y, fns[2])
-    names(y) <- paste0("Id", (length(x)+1):(length(x)+length(y)))
-    if(length(y)==1){
+    names(y) <- paste0("Id", (length(x) + 1):(length(x) + length(y)))
+    if (length(y)==1){
       opts <- paste("-i", fns[1],"--profile1",
-        fns[2], "-o", fns[3], "--force")
-    }else{
+                    fns[2], "-o", fns[3], "--force")
+    } else{
       opts <- paste("--profile1", fns[1],"--profile2",
-        fns[2], "-o", fns[3], "--force")
+                    fns[2], "-o", fns[3], "--force")
     }
     opts <- paste(opts, MoreArgs)
     out <- system(paste(exec, opts), ignore.stdout = quiet)
     if (out == 127)
       stop(.errorAlignment(exec, "Clustal-Omega"))
-    res <- read.fas(fns[3], type = type)
+    res <- read.fas(fns[3])
     rownames(res) <- c(labels.bak, labels.baky)
     res
   }
@@ -91,7 +91,7 @@ clustalo <- function (x, y, gt, exec = NULL,MoreArgs = "",
   # unlink(gtt[file.exists(gtt)])
   if(!missing(file)){
     write.fas(res, file)
-  }else{
+  } else{
     return(res)
   }
 }

@@ -1,15 +1,16 @@
-## This code is part of the rpg package
-## © C. Heibl 2016 (last update 2017-03-15)
+## This code is part of the polenta package
+## © C. Heibl 2016 (last update 2017-10-11)
 
 #' @title Split Phylogeny Equally
 #' @description Split a phylogenetic tree into two equally sized subtrees.
-#' @param phy A phylogenetic tree of class \code{\link{phylo}}.
+#' @param phy A phylogenetic tree of class \code{\link[ape]{phylo}}.
 #' @param k An integer, only trees with > k tips will be split.
-#' @return A list containing two subtrees of class \code{\link{"phylo}}.
+#' @return A list containing two subtrees of class \code{\link[ape]{phylo}}.
 #' @details The phylogenetic tree is treated as unrooted, no matter whether is
 #'   rooted or not.
-#' @seealso \code{\link{decomposePhylo}} to decompose large phylogenetic trees
+#' @seealso \code{\link{decomposePhyloRooted}} to decompose large phylogenetic trees
 #'   into subsets of a certain size.
+#' @importFrom ape drop.tip extract.clade
 #' @importFrom ips descendants
 #' @export
 

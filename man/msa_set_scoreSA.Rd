@@ -2,7 +2,7 @@
 % Please edit documentation in R/msa_set_scoreSA.R
 \name{msa_set_scoreSA}
 \alias{msa_set_scoreSA}
-\title{Compare reference MSAs with alternative MSAs}
+\title{Compare Reference MSAs with Alternative MSAs}
 \usage{
 msa_set_scoreSA(ref, alt,
   exec = "/Users/krah/Documents/R/pkgs/polenta/src/msa_set_score_src/msa_set_score",
@@ -47,16 +47,21 @@ residual_pair_sequence_score: like the residue_column_score but for
   sequences
 }
 \description{
-MSA reliability scores (Penn et al. 2010)
-
-Wrapper function for program msa_set_score v2.01 of the GUIDANCE program (see reference). Copyright: To modify the code, or use parts of it for other purposes, permission should be requested. Please contact Tal Pupko: talp@post.tau.ac.il. Please note that the use of the GUIDANCE program is for academic use only.
-
-C code computing basic MSA comparision. The most basic is the residue pairs residue score, which checks if residue pairs combinations are correctly aligned in both MSAs. From this the residue score, residue column score (GUIDANCE score), residue sequence score are computed. It also calulates the column score (CS), which simply checks if a column is identically aligned in the alternative MSA.
+Wrapper function for program msa_set_score v2.01 of the GUIDANCE
+  program (see reference). Copyright: To modify the code, or use parts of it
+  for other purposes, permission should be requested. Please contact Tal
+  Pupko: talp@post.tau.ac.il. Please note that the use of the GUIDANCE
+  program is for academic use only. C code computing basic MSA comparision.
+  The most basic is the residue pairs residue score, which checks if residue
+  pairs combinations are correctly aligned in both MSAs. From this the
+  residue score, residue column score (GUIDANCE score), residue sequence
+  score are computed. It also calulates the column score (CS), which simply
+  checks if a column is identically aligned in the alternative MSA.
 }
 \references{
 Penn et al. (2010). An alignment confidence score capturing
   robustness to guide tree uncertainty. Molecular Biology and Evolution
-  27:1759--1767
+  27:1759--1767.
 }
 \seealso{
 \code{\link{guidance}}, \code{\link{guidance2}}, \code{\link{HoT}}

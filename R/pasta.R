@@ -1,5 +1,5 @@
 ## This code is part of the polenta package
-## © C. Heibl 2016 (last update 2017-06-07)
+## © C. Heibl 2016 (last update 2017-10-13)
 
 #' @title Ultra-Large Multiple Sequence Alignment with PASTA
 #' @description Provides a complete reimplementation of the PASTA algorithm
@@ -23,6 +23,7 @@
 #' @return An object of class \code{\link{polentaDNA}}.
 #' @seealso \code{\link{extractMSA}} for extractiong the multiple sequence
 #'   alignment of an \code{polentaDNA} object.
+#' @importFrom foreach foreach
 #' @importFrom igraph as_edgelist
 #' @importFrom ips mafft mafft.merge
 #' @export
@@ -79,7 +80,7 @@ pasta <- function(seqs, gt, k = 200,
     opts <- list(progress = progress)
     cl <- makeCluster(ncore)
     registerDoSNOW(cl)
-    seqs <- foreach(i = 1:length(seqs), 
+    seqs <- foreach(i = 1:length(seqs),
                     .packages = c('ips', 'ape'),
                     .options.snow = opts)  %dopar% {
                       mafft(x = seqs[[i]], method = method, exec = exec)
@@ -128,7 +129,7 @@ pasta <- function(seqs, gt, k = 200,
       attr(obj, "vertices") <- meta
       obj
     }
-    
+
     cl <- makeCluster(ncore)
     registerDoSNOW(cl)
     while (length(seqs) > 1){
@@ -143,10 +144,10 @@ pasta <- function(seqs, gt, k = 200,
     }
     stopCluster(cl)
     seqs <- seqs[[1]]
-    
-    
-    
-    
+
+
+
+
 
     ## next steps
     ## - put pairing() in its on file

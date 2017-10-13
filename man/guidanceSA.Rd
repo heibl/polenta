@@ -4,30 +4,37 @@
 \alias{guidanceSA}
 \title{Interface to guidance program}
 \usage{
-guidanceSA(sequences, msa.program, programm, bootstrap, gencode, outorder,
+guidanceSA(sequences, bootstrap, msa.program, program, gencode, outorder,
   msafile, cutoff = 0.93, moreArgs, exec, proc_num, quiet = FALSE)
 }
 \arguments{
 \item{sequences}{An object of class \code{\link{DNAbin}} or
 \code{\link{AAbin}} containing unaligned sequences of DNA or amino acids.}
 
+\item{bootstrap}{An integer giving the number of perturbated MSAs.}
+
 \item{msa.program}{A charcter string giving the name of the MSA program,
 currelty one of c("mafft", "muscle", "clustalo", "clustalw2"); MAFFT is
 default}
 
-\item{bootstrap}{An integer giving the number of perturbated MSAs.}
+\item{program}{A charcter string giving the name one of c("guidance", "guidance2", "HoT").}
 
-\item{exec}{path to guidance program folder, e.g. "/Applications/guidance.v2.02/"}
+\item{gencode}{XXX.}
 
-\item{proc_num}{number of cores}
+\item{outorder}{XXX.}
 
-\item{quiet}{logical if TRUE, progress is printed to console}
+\item{msafile}{XXX.}
 
-\item{parallel}{logical, if TRUE, specify the number of cores}
+\item{cutoff}{XXX.}
 
-\item{ncore}{number of cores (default is maxinum of local threads)}
+\item{moreArgs}{XXX.}
 
-\item{program}{character, one of c("guidance", "guidance2", "HoT")}
+\item{exec}{path to guidance program folder, e.g.
+"/Applications/guidance.v2.02/"}
+
+\item{proc_num}{Integer giving the number of cores.}
+
+\item{quiet}{logical if TRUE, progress is printed to console.}
 }
 \value{
 list containing following scores and alignments:

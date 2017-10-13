@@ -8,15 +8,17 @@ guidance(sequences, msa.exec = "/usr/local/bin/mafft", bootstrap = 100,
   ncore = 1, method = "auto", store_msas = FALSE)
 }
 \arguments{
-\item{sequences}{object of class \code{\link{DNAbin}} or
-\code{\link{AAbin}} containing unaligned sequences of DNA or amino acids.}
+\item{sequences}{object of class \code{\link{DNAbin}} or \code{\link{AAbin}}
+containing unaligned sequences of DNA or amino acids.}
 
 \item{msa.exec}{character string giving the path to the executable of the
-alignment program (e.g. "/usr/local/bin/mafft"); Must be on of: 'mafft', 'muscle', 'clustalo', 'clustalw2'}
+alignment program (e.g. "/usr/local/bin/mafft"); Must be on of: 'mafft',
+'muscle', 'clustalo', 'clustalw2'}
 
 \item{bootstrap}{integer giving the number of alternative MSAs to be computed}
 
-\item{ncore}{integer specifying the number of cores; default = 1 (serial), "auto" can be used for automated usage of all detected cores}
+\item{ncore}{integer specifying the number of cores; default = 1 (serial),
+"auto" can be used for automated usage of all detected cores}
 
 \item{method}{further argument passed to mafft, default is \code{"auto"}}
 }

@@ -5,12 +5,12 @@
 #' @export
 
 clustalw2 <- function (x, y, gt, pw.gapopen = 10, pw.gapext = 0.1, gapopen = 10,
-  gapext = 0.2, exec = NULL, MoreArgs = "", quiet = TRUE, original.ordering = TRUE, file)
+                       gapext = 0.2, exec = NULL, MoreArgs = "", quiet = TRUE, original.ordering = TRUE, file)
 {
   os <- Sys.info()[1]
   if (is.null(exec)) {
     exec <- switch(os, Linux = "clustalw", Darwin = "clustalw2",
-      Windows = "clustalw2.exe")
+                   Windows = "clustalw2.exe")
   }
   if (missing(x)) {
     out <- system(paste(exec, "-help"))
@@ -18,9 +18,6 @@ clustalw2 <- function (x, y, gt, pw.gapopen = 10, pw.gapext = 0.1, gapopen = 10,
       stop(.errorAlignment(exec, "Clustal"))
     return(invisible(NULL))
   }
-
-  type <- class(x)
-  type <- gsub("bin", "", type)
 
   fns <- vector(length = 4)
   for (i in seq_along(fns))
@@ -32,7 +29,6 @@ clustalw2 <- function (x, y, gt, pw.gapopen = 10, pw.gapext = 0.1, gapopen = 10,
   labels.bak <- names(x)
   names(x) <- paste0("Id", 1:length(x))
   write.fas(x, fns[1])
-
 
   if(missing(y)){
     prefix <- c("-INFILE", "-PWGAPOPEN", "-PWGAPEXT", "-GAPOPEN","-GAPEXT", "-OUTFILE","-OUTPUT")
@@ -59,7 +55,7 @@ clustalw2 <- function (x, y, gt, pw.gapopen = 10, pw.gapext = 0.1, gapopen = 10,
     out <- system(paste(exec, opts), ignore.stdout = quiet)
     if (out == 127)
       stop(.errorAlignment(exec, "Clustal"))
-    res <- read.fas(fns[3], type = type)
+    res <- read.fas(fns[3])
     if (original.ordering)
       res <- res[labels(x), ]
     rownames(res) <- labels.bak
@@ -69,29 +65,29 @@ clustalw2 <- function (x, y, gt, pw.gapopen = 10, pw.gapext = 0.1, gapopen = 10,
   if(!missing(y)){
     y <- as.list(y)
     labels.baky <- names(y)
-    names(y) <- paste0("Id", (length(x)+1):(length(x)+length(y)))
+    names(y) <- paste0("Id", (length(x) + 1):(length(x) + length(y)))
     write.fas(y, fns[2])
     prefix <- c("-PROFILE1", "-PROFILE2", "-PWGAPOPEN", "-PWGAPEXT",
-      "-GAPOPEN","-GAPEXT", "-OUTFILE","-OUTPUT")
+                "-GAPOPEN","-GAPEXT", "-OUTFILE","-OUTPUT")
     suffix <- c(fns[1], fns[2], pw.gapopen, pw.gapext,
-      gapopen, gapext, fns[3], "FASTA")
+                gapopen, gapext, fns[3], "FASTA")
     # }
     opts <- paste(prefix, suffix, sep = "=", collapse = " ")
     opts <- paste(opts, MoreArgs)
     out <- system(paste(exec, opts), ignore.stdout = quiet)
-  if (out == 127)
-    stop(.errorAlignment(exec, "Clustal"))
-  res <- read.fas(fns[3], type = type)
-  if (original.ordering)
-    res <- res[c(labels(x), labels(y)), ]
-  rownames(res) <- c(labels.bak, labels.baky)
-  res
+    if (out == 127)
+      stop(.errorAlignment(exec, "Clustal"))
+    res <- read.fas(fns[3])
+    if (original.ordering)
+      res <- res[c(labels(x), labels(y)), ]
+    rownames(res) <- c(labels.bak, labels.baky)
+    res
   }
   unlink(fns[file.exists(fns)])
   # unlink(gtt[file.exists(gtt)])
   if(!missing(file)){
     write.fas(res, file)
-  }else{
-  return(res)
+  } else {
+    return(res)
   }
 }

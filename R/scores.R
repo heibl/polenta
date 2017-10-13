@@ -1,60 +1,65 @@
 ## This code is part of the polenta package
-## © F.-S. Krah, C. Heibl 2017 (last update 2017-08-18)
-#' Calculate additional scores based on residue pair score
-#'
+## © F.-S. Krah, C. Heibl 2017 (last update 2017-10-13)
+
+#' @title Score Calculation
+#' @description Calculate additional scores based on residue pair score.
 #' @param polenta object of class \code{\link{polenta}}
-#' @param score character, currently c("column", "residue", "alignment", "sequence", "all")
-#'
-#' @details The score 'column' is the GUIDANCE column score which is the mean of the residue pair residue score across columns. The score 'alignment' is the mean across the residue pair residue scores. The score 'sequence' is the mean of the residue pair score across rows (sequences). The score 'residue' is the mean score across the residue pairs with that residue (residue pair score).
-#'
-#' @details The GUIDANCE column score can be utilized to weight characters in RAxML (flag -a). Simple removal of sites from the MSA should be done with cautions (Tan et al. 2015).
-#'
+#' @param score A character string indicating a type of score, currently
+#'   available \code{"column"}, \code{"residue"}, \code{"alignment"},
+#'   \code{"sequence"}, \code{"all"}.
+#' @param na.rm Logical, indicating if NA should be removed.
+#' @details The score 'column' is the GUIDANCE column score which is the mean of
+#'   the residue pair residue score across columns. The score 'alignment' is the
+#'   mean across the residue pair residue scores. The score 'sequence' is the
+#'   mean of the residue pair score across rows (sequences). The score 'residue'
+#'   is the mean score across the residue pairs with that residue (residue pair
+#'   score).
+#' @details The GUIDANCE column score can be utilized to weight characters in
+#'   RAxML (flag -a). Simple removal of sites from the MSA should be done with
+#'   cautions (Tan et al. 2015).
 #' @references Penn et al. (2010). An alignment confidence score capturing
 #'   robustness to guide tree uncertainty. Molecular Biology and Evolution
-#'   27:1759--1767
-#'
-#' @references Tan et al. (2015). Current methods for automated filtering of multiple
-#'   sequence alignments frequently worsen single-gene phylogenetic inference. Systematic
-#'   biology 64:778--791
-#'
+#'   27:1759--1767.
+#' @references Tan et al. (2015). Current methods for automated filtering of
+#'   multiple sequence alignments frequently worsen single-gene phylogenetic
+#'   inference. Systematic biology 64:778--791.
 #' @return data.frame or list of data.frames with scores
-#'
 #' @seealso \code{\link{filterMSA}}
-#'
 #' @author Franz-Sebastian Krah
+#' @importFrom foreach foreach
 #' @import parallel
+#' @importFrom utils combn
 #' @export
 
-
 scores <- function(polenta,
-  score = c("alignment", "column", "residue", "sequence"),
-  na.rm = TRUE){
+                   score = c("alignment", "column", "residue", "sequence"),
+                   na.rm = TRUE){
 
-  if(!inherits(polenta, c("polentaDNA", "polentaAA"))){
+  if (!inherits(polenta, c("polentaDNA", "polentaAA"))){
     stop("rpsc not if class 'polenta'")
   }
 
   sc <- polenta@scores
   base.msa <- polenta@msa
 
-  if(score == "all")
+  if (score == "all")
     score <- c("alignment", "column", "sequence", "residue")
 
-  if("alignment" %in% score){
+  if ("alignment" %in% score){
     ## calculate GUIDANCE score
     alignment <- mean(sc, na.rm = TRUE)
   }
 
-  if("column" %in% score){
-      ## calculate GUIDANCE score
+  if ("column" %in% score){
+    ## calculate GUIDANCE score
     column <- colMeans(sc, na.rm = TRUE)
     column <- data.frame(col = 1:length(column), score = column)
-      if(na.rm){
-        column <- column[!is.na(column$score), ]
-      }
+    if (na.rm){
+      column <- column[!is.na(column$score), ]
+    }
   }
 
-  if("sequence" %in% score){
+  if ("sequence" %in% score){
     ## calculate GUIDANCE score
     fac <- apply(combn(nrow(base.msa), 2), 2, paste, collapse = "-")
     fac_list <- foreach(i = 1:nrow(base.msa)) %do% grep(paste0(i, "\\b"), fac)
@@ -66,22 +71,22 @@ scores <- function(polenta,
     sequence <- data.frame(seq = 1:length(seq), score = seq)
   }
 
-  if("residue" %in% score){
-      ## Calculate residue pair residue score
-      fac <- apply(combn(nrow(base.msa), 2), 2, paste, collapse = "-")
-      fac_list <- foreach(i = 1:nrow(base.msa)) %do% grep(paste0(i, "\\b"), fac)
+  if ("residue" %in% score){
+    ## Calculate residue pair residue score
+    fac <- apply(combn(nrow(base.msa), 2), 2, paste, collapse = "-")
+    fac_list <- foreach(i = 1:nrow(base.msa)) %do% grep(paste0(i, "\\b"), fac)
 
-      residue <- mclapply(fac_list, function(x) {
-        colMeans(sc[x, ], na.rm = T)
-      }, mc.cores = detectCores())
+    residue <- mclapply(fac_list, function(x) {
+      colMeans(sc[x, ], na.rm = TRUE)
+    }, mc.cores = detectCores())
 
-      residue <- do.call(rbind, residue)
-      colnames(residue) <- 1:ncol(residue)
-      rownames(residue) <- rownames(base.msa)
-      if(na.rm){
-        residue <- residue[, !apply(residue, 2, function(x) !any(!is.na(x)))]
-      }
+    residue <- do.call(rbind, residue)
+    colnames(residue) <- 1:ncol(residue)
+    rownames(residue) <- rownames(base.msa)
+    if(na.rm){
+      residue <- residue[, !apply(residue, 2, function(x) !any(!is.na(x)))]
     }
+  }
 
   return(mget(score))
 }

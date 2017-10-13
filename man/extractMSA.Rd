@@ -12,3 +12,6 @@ extractMSA(x)
 \description{
 Extract DNA or amino acid sequences from \code{polenta*} objects.
 }
+\author{
+Christoph Heibl
+}

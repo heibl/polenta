@@ -1,13 +1,19 @@
 #' Filtering of the base MSA using polenta scores
 #'
 #' @param polenta object of class \code{\link{polenta}}
-#' @param col.cutoff numeric between 0 and 1; removes unreliable columns below the cutoff (default: 0.2); ignored if FALSE
-#' @param seq.cutoff numeric between 0 and 1; removes unreliable sequences below the cutoff (default: 0.1); ignored if FALSE
-#' @param mask.cutoff residues below the cutoff are masked ('N' for DNA, 'X' for AA; default: 0.5); ignored if FALSE
+#' @param col.cutoff numeric between 0 and 1; removes unreliable columns below
+#'   the cutoff (default: 0.2); ignored if FALSE
+#' @param seq.cutoff numeric between 0 and 1; removes unreliable sequences below
+#'   the cutoff (default: 0.1); ignored if FALSE
+#' @param mask.cutoff residues below the cutoff are masked ('N' for DNA, 'X' for
+#'   AA; default: 0.5); ignored if FALSE
 #' @param filter.ends logical, if TRUE trim.ends (ips) is applied to the MSA
 #' @param filter.gaps logical, if TRUE trim.gabs (ips) is applied to the MSA
-#' @param column_score logical, if TRUE column score (e.g. for RAxML: flag -a) is in the output
-#' @param flag_a character specifying a path. If path is supplied function writes the filtered MSA into a fasta file. Additionally the function produces a file with the column score ready for RAxML input (flag -a)
+#' @param column_score logical, if TRUE column score (e.g. for RAxML: flag -a)
+#'   is in the output
+#' @param flag_a character specifying a path. If path is supplied function
+#'   writes the filtered MSA into a fasta file. Additionally the function
+#'   produces a file with the column score ready for RAxML input (flag -a)
 #' @return masked MSA of class \code{AAbin} or \code{DNAbin}
 #' @return column_score is optional
 #' @seealso \code{\link{scores}}
@@ -15,14 +21,14 @@
 #' @export
 
 filterMSA <- function(polenta,
-  col.cutoff = 0.2,
-  seq.cutoff = 0.1,
-  mask.cutoff = 0.5,
-  filter.ends = FALSE,
-  filter.gaps  = FALSE,
-  column_score = FALSE,
-  flag_a = FALSE,
-  na.coding = 0.5) {
+                      col.cutoff = 0.2,
+                      seq.cutoff = 0.1,
+                      mask.cutoff = 0.5,
+                      filter.ends = FALSE,
+                      filter.gaps  = FALSE,
+                      column_score = FALSE,
+                      flag_a = FALSE,
+                      na.coding = 0.5) {
 
   base.msa <- polenta@msa
 
@@ -74,9 +80,8 @@ filterMSA <- function(polenta,
 
   if (!flag_a == FALSE) {
     write.fas(base.msa,
-      file = paste(flag_a, "/filtMSA_", Sys.Date(), ".fas", sep = ""))
-    g_sc <- paste(round(g_sc$score * 10, digits = 0),
-      collapse = " ")
+              file = paste0(flag_a, "/filtMSA_", Sys.Date(), ".fas"))
+    g_sc <- paste(round(g_sc$score * 10, digits = 0), collapse = " ")
     write(
       g_sc,
       file = paste(flag_a, "/filtMSA_GCSC_", Sys.Date(), ".txt", sep = ""),

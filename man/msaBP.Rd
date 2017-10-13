@@ -2,10 +2,13 @@
 % Please edit documentation in R/msaBP.R
 \name{msaBP}
 \alias{msaBP}
-\title{Bootstrap a multiple sequence alignnment}
+\title{Bootstrap a Multiple Sequence Alignnment}
 \usage{
 msaBP(msa)
 }
+\arguments{
+\item{msa}{An object of class \code{\link{DNAbin}} or \code{\link{AAbin}}.}
+}
 \description{
-Bootstrap a multiple sequence alignnment
+Create a bootstrap replicate of multiple sequence alignment.
 }

@@ -1,20 +1,24 @@
 ## This code is part of the polenta package
-## © F.-S. Krah (last update 2017-08-18)
+## © F.-S. Krah (last update 2017-10-13)
 
 #' Interface to guidance program
 #'
 #' @param sequences An object of class \code{\link{DNAbin}} or
 #'   \code{\link{AAbin}} containing unaligned sequences of DNA or amino acids.
-#' @param parallel logical, if TRUE, specify the number of cores
-#' @param ncore number of cores (default is maxinum of local threads)
 #' @param bootstrap An integer giving the number of perturbated MSAs.
 #' @param msa.program A charcter string giving the name of the MSA program,
 #'   currelty one of c("mafft", "muscle", "clustalo", "clustalw2"); MAFFT is
 #'   default
-#' @param proc_num number of cores
-#' @param quiet logical if TRUE, progress is printed to console
-#' @param program character, one of c("guidance", "guidance2", "HoT")
-#' @param exec path to guidance program folder, e.g. "/Applications/guidance.v2.02/"
+#' @param program A charcter string giving the name one of c("guidance", "guidance2", "HoT").
+#' @param gencode XXX.
+#' @param outorder XXX.
+#' @param msafile XXX.
+#' @param cutoff XXX.
+#' @param moreArgs XXX.
+#' @param exec path to guidance program folder, e.g.
+#'   "/Applications/guidance.v2.02/"
+#' @param proc_num Integer giving the number of cores.
+#' @param quiet logical if TRUE, progress is printed to console.
 #' @return list containing following scores and alignments:
 #' @return mean_scores residue pair score and mean column score
 #' @return column_score
@@ -31,19 +35,18 @@
 #' @import useful
 #' @import foreach
 #' @import ips
-#'
+#' @importFrom utils read.table
 #' @author Franz-Sebastian Krah
 #'
 #' @export
-#'
 
-guidanceSA <- function(sequences, msa.program, programm,
-  bootstrap, gencode, outorder, msafile, cutoff= 0.93,
-  moreArgs, exec, proc_num, quiet = FALSE){
+guidanceSA <- function(sequences, bootstrap, msa.program, program,
+                       gencode, outorder, msafile, cutoff = 0.93,
+                       moreArgs, exec, proc_num, quiet = FALSE){
 
-  perl.call <- paste("perl", paste(exec, "www/Guidance/guidance.pl" , sep=""))
+  perl.call <- paste("perl", paste0(exec, "www/Guidance/guidance.pl"))
   t <- system(perl.call, ignore.stderr = TRUE)
-  if(t == 2){
+  if (t == 2){
     stop("GUIDANCE is not responding!")
   }
 
@@ -53,10 +56,8 @@ guidanceSA <- function(sequences, msa.program, programm,
 
   type <- class(sequences)
   type <- gsub("bin", "", type)
-  if(type == "DNA")
-    type <- "nuc"
-  if(type == "AA")
-    type <- "aa"
+  if (type == "DNA") type <- "nuc"
+  if (type == "AA") type <- "aa"
 
   fns <- vector(length = 1)
   for (i in seq_along(fns))
@@ -67,55 +68,55 @@ guidanceSA <- function(sequences, msa.program, programm,
 
   # necessary
   seqFile <- paste("--seqFile", fns[1])
-  if(lower.case(msa.program))
+  if (lower.case(msa.program))
     msa.program <- str_to_upper(msa.program)
-  msa.program <- paste("--msaProgram", msa.program, sep=" ")
+  msa.program <- paste("--msaProgram", msa.program)
 
-  seqType <- paste("--seqType", type, sep=" ")
+  seqType <- paste("--seqType", type)
   # outDir <- paste("--outDir", outdir, sep=" ")
-  if(programm == "hot")
-    programm <- "HoT"
-  if(lower.case(programm))
-    programm <- str_to_upper(programm)
-  programm <- paste("--program", programm, sep=" ")
-  bootstraps <- paste("--bootstraps", bootstrap, sep=" ")
-  outdir <- paste(tempdir(), "guidance", sep="/")
-  outDir <- paste("--outDir", outdir, sep=" ")
+  if (program == "hot")
+    program <- "HoT"
+  if (lower.case(program))
+    program <- str_to_upper(program)
+  program <- paste("--program", program)
+  bootstraps <- paste("--bootstraps", bootstrap)
+  outdir <- paste(tempdir(), "guidance", sep = "/")
+  outDir <- paste("--outDir", outdir)
 
 
-  if(!missing(moreArgs))
-    moreArgs <- paste("--MSA_Param", moreArgs, sep =" ")
-  if(!missing(gencode))
-    gencode <- paste("--genCode", gencode, sep=" ")
-  if(!missing(outorder))
-    outorder <- paste("--outOrder", outorder, sep=" ")
-  if(!missing(msafile))
-    msafile <- paste("--msaFile", msafile, sep=" ")
-  if(!missing(cutoff))
-    cutoff <- paste("--seqCutoff", cutoff, sep=" ")
-  if(!missing(proc_num))
-    proc_num <- paste("--proc_num", proc_num, sep=" ")
+  if (!missing(moreArgs))
+    moreArgs <- paste("--MSA_Param", moreArgs)
+  if (!missing(gencode))
+    gencode <- paste("--genCode", gencode)
+  if (!missing(outorder))
+    outorder <- paste("--outOrder", outorder)
+  if (!missing(msafile))
+    msafile <- paste("--msaFile", msafile)
+  if (!missing(cutoff))
+    cutoff <- paste("--seqCutoff", cutoff)
+  if (!missing(proc_num))
+    proc_num <- paste("--proc_num", proc_num)
 
 
   moreArgs <- foreach(i = c("moreArgs", "gencode","outorder",
-    "msafile", "cutoff", "proc_num"), .combine = 'c') %do% {
-      if(is.object(i)){
-        i
-      }else{""}
-    }
+                            "msafile", "cutoff", "proc_num"), .combine = 'c') %do% {
+                              if (is.object(i)){
+                                i
+                              } else {""}
+                            }
   moreArgs <- moreArgs[-grep("", moreArgs)]
 
   guidance.call <- paste(seqFile, msa.program, seqType,
-    outDir, programm, bootstraps, moreArgs)
+                         outDir, program, bootstraps, moreArgs)
   guidance.call <- paste(perl.call, guidance.call)
   ## CALL
-  if(quiet){
+  if (quiet){
     system(guidance.call, ignore.stdout = TRUE, ignore.stderr = TRUE)
-  }else{
+  } else {
     system(guidance.call)
   }
 
-  files <- list.files(paste(tempdir(), "guidance", sep="/"), full.names = TRUE)
+  files <- list.files(paste(tempdir(), "guidance", sep = "/"), full.names = TRUE)
   # files <- list.files("../../../PhD/proj/high_priority/color_new_alignment/rpb1.fguidance/",full.names = TRUE)
   read <- files[grep("\\.scr\\b", files)]
   read <- read[-grep("csv", read)]
@@ -131,9 +132,8 @@ guidanceSA <- function(sequences, msa.program, programm,
   msc <- unlist(msc)
   msc <- data.frame(do.call(cbind, strsplit(msc, " ")))
   msc[] <- lapply(msc, as.character)
-  names(msc) <- c(msc[1,1], msc[1,2])
-  msc <- msc[-1,]
-
+  names(msc) <- c(msc[1, 1], msc[1, 2])
+  msc <- msc[-1, ]
 
   # Residue pair column score (GUIDANCE Score)
   g.sc <- read.table(read[3])
@@ -173,13 +173,13 @@ guidanceSA <- function(sequences, msa.program, programm,
 
   # output
   res <- list(scores = list(mean_score = msc,
-    column_score = CS,
-    residue_pair_column_score = g.sc,
-    residue_pair_residue_score = rpr.sc,
-    residual_pair_sequence_pair_score  = rpsp.sc,
-    residual_pair_sequence_score = rps.sc,
-    residue_pair_score = rp.sc),
-    reduced_msa = guidance.msa,
-    base_msa = base.msa)
+                            column_score = CS,
+                            residue_pair_column_score = g.sc,
+                            residue_pair_residue_score = rpr.sc,
+                            residual_pair_sequence_pair_score  = rpsp.sc,
+                            residual_pair_sequence_score = rps.sc,
+                            residue_pair_score = rp.sc),
+              reduced_msa = guidance.msa,
+              base_msa = base.msa)
   return(res)
 }

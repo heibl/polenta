@@ -1,6 +1,11 @@
 ## This code is part of the megaptera package
-## © C. Heibl 2016 (2017-03-15)
+## © C. Heibl 2016 (2017-10-11)
 
+#' @title Decompose Phylogeny
+#' @description Decomposes (splits) a phylogenetic tree into roughly equal-sized subtree.
+#' @param phy An object of class \code{\link{phylo}}.
+#' @param k An integer giving the size of the subtrees.
+#' @importFrom ape is.binary.tree multi2di
 #' @export
 
 decomposePhyloRooted <- function(phy, k = 200){

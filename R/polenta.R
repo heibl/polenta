@@ -9,11 +9,10 @@
 #' @param gt \emph{Currently unused.}
 #' @param k An integer giving the size of cluster in which the dataset is split.
 #' @param bootstrap An integer giving the number of bootstrap replicates.
-#' @param msa.program A character string giving the alignment program to use;
-#'   currently only \code{"mafft"} is possible.
-#' @param method A character string choosing a method of the alignment program; see \code{\link{mafft}} for possible options.
-#' @param exec A character string giving the path to the alignment program executable.
-#' @param parallel Logical, indicating if the function should be run in parallel or serial mode.
+#' @param method A character string choosing a method of the alignment program;
+#'   see \code{\link{mafft}} for possible options.
+#' @param exec A character string giving the path to the alignment program
+#'   executable.
 #' @param ncore An integer giving the number of cores to use in parallel mode.
 #' @return An object of class \code{\link{polentaDNA}}.
 #' @seealso \code{\link{extractMSA}} for extractiong the multiple sequence
@@ -23,8 +22,7 @@
 #' @export
 
 polenta <- function(seqs, gt, k = 200, bootstrap = 100,
-                    msa.program = "mafft", method = "auto", exec,
-                    parallel = FALSE, ncore){
+                    method = "auto", exec, ncore){
 
   ## remove gaps from aligned sequences
   ## ----------------------------------
@@ -37,8 +35,8 @@ polenta <- function(seqs, gt, k = 200, bootstrap = 100,
   if (length(seqs) <= k){
     cat(length(seqs), "species will be aligned with MAFFT L-INS-i\n")
 
-    seqs <- guidance(seqs, parallel = parallel, ncore = ncore,
-                     bootstrap = bootstrap, msa.program = msa.program,
+    seqs <- guidance(seqs, ncore = ncore,
+                     bootstrap = bootstrap,
                      method = method, exec = exec)
 
     ## more than k species will be aligned with PASTA
@@ -67,9 +65,9 @@ polenta <- function(seqs, gt, k = 200, bootstrap = 100,
     ## alignment of subtrees
     ## ---------------------
     foo <- function(seqs, taxa){
-      guidance(seqs[taxa], parallel = parallel, ncore = ncore,
-               bootstrap = bootstrap, msa.program = msa.program,
-               method = method, exec = exec)
+      guidance(seqs[taxa], ncore = ncore,
+               bootstrap = bootstrap,
+               method = method, msa.exec = exec)
     }
     seqs <- lapply(subtrees, foo, seqs = seqs)
     names(seqs) <- names(subtrees)

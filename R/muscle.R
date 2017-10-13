@@ -1,11 +1,11 @@
-# [FK 2017-03-27]
+# [FK 2017-10-13]
 # Code based on 'muscle' from ape
 # NEW: alignment of PROFILE1 and PROFILE2
 # NEW: guide-tree alignment
 #' @export
 
-muscle2 <- function (x, y,gt, exec = "muscle", MoreArgs = "",
-  quiet = TRUE, original.ordering=TRUE, file)
+muscle2 <- function (x, y, gt, exec = "muscle", MoreArgs = "",
+                     quiet = TRUE, original.ordering = TRUE, file)
 {
   if (missing(x)) {
     out <- system(exec)
@@ -13,9 +13,6 @@ muscle2 <- function (x, y,gt, exec = "muscle", MoreArgs = "",
       stop(.errorAlignment(exec, "MUSCLE"))
     return(invisible(NULL))
   }
-
-  type <- class(x)
-  type <- gsub("bin", "", type)
 
   # Produce TEMP files
   fns <- vector(length = 4)
@@ -56,26 +53,26 @@ muscle2 <- function (x, y,gt, exec = "muscle", MoreArgs = "",
     out <- system(paste(exec, opts), ignore.stdout = TRUE,  ignore.stderr = TRUE)
     if (out == 127)
       stop(.errorAlignment(exec, "MUSCLE"))
-    res <- read.fas(fns[3], type =type)
+    res <- read.fas(fns[3])
     if (original.ordering)
       res <- res[labels(x), ]
     rownames(res) <- labels.bak
     res
   }
 
-  if(!missing(y)){
+  if (!missing(y)){
     y <- as.list(y)
     labels.baky <- names(y)
-    names(y) <- paste0("Id", (length(x)+1):(length(x)+length(y)))
+    names(y) <- paste0("Id", (length(x) + 1):(length(x) + length(y)))
     write.fas(y, fns[2])
     opts <- paste("-profile", "-in1", fns[1],"-in2", fns[2], "-out", fns[3])
     if (quiet)
       opts <- paste(opts, "-quiet")
     opts <- paste(opts, MoreArgs)
-    out <- system(paste(exec, opts),ignore.stdout = TRUE,  ignore.stderr = TRUE)
+    out <- system(paste(exec, opts),ignore.stdout = TRUE, ignore.stderr = TRUE)
     if (out == 127)
       stop(.errorAlignment(exec, "MUSCLE"))
-    res <- read.fas(fns[3], type =type)
+    res <- read.fas(fns[3])
     if (original.ordering)
       res <- res[c(labels(x), labels(y)), ]
     rownames(res) <- c(labels.bak, labels.baky)
@@ -83,9 +80,9 @@ muscle2 <- function (x, y,gt, exec = "muscle", MoreArgs = "",
   }
   unlink(fns[file.exists(fns)])
   # unlink(gtt[file.exists(gtt)])
-  if(!missing(file)){
+  if (!missing(file)){
     write.fas(res, file)
-  }else{
+  } else {
     return(res)
   }
 }

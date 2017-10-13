@@ -7,12 +7,12 @@
 equalSubtrees(phy, k)
 }
 \arguments{
-\item{phy}{A phylogenetic tree of class \code{\link{phylo}}.}
+\item{phy}{A phylogenetic tree of class \code{\link[ape]{phylo}}.}
 
 \item{k}{An integer, only trees with > k tips will be split.}
 }
 \value{
-A list containing two subtrees of class \code{\link{"phylo}}.
+A list containing two subtrees of class \code{\link[ape]{phylo}}.
 }
 \description{
 Split a phylogenetic tree into two equally sized subtrees.
@@ -22,6 +22,6 @@ The phylogenetic tree is treated as unrooted, no matter whether is
   rooted or not.
 }
 \seealso{
-\code{\link{decomposePhylo}} to decompose large phylogenetic trees
+\code{\link{decomposePhyloRooted}} to decompose large phylogenetic trees
   into subsets of a certain size.
 }
