@@ -2,8 +2,10 @@
 ## © C. Heibl 2017 (last update 2017-10-13)
 
 #' @title Extract Sequences from POLENTA Output
-#' @description Extract DNA or amino acid sequences from \code{polenta*} objects.
-#' @param x An object of class \code{\link{polentaDNA}} or \code{\link{polentaAA}}.
+#' @description Extract DNA or amino acid sequences from \code{polenta*}
+#'   objects.
+#' @param x An object of class \code{"\link[=polentaDNA-class]{polentaDNA}"} or
+#'   \code{"\link[=polentaAA-class]{polentaAA}"}.
 #' @author Christoph Heibl
 #' @importFrom igraph as_edgelist
 #' @importFrom ips mafft mafft.merge

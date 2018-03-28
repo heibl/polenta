@@ -2,35 +2,40 @@
 % Please edit documentation in R/guidance.R
 \name{guidance}
 \alias{guidance}
-\title{GUIDetree-based AligNment ConficencE}
+\title{MSA Reliability Assessment with GUIDANCE}
 \usage{
-guidance(sequences, msa.exec = "/usr/local/bin/mafft", bootstrap = 100,
-  ncore = 1, method = "auto", store_msas = FALSE)
+guidance(sequences, bootstrap = 100, method = "auto",
+  msa.exec = "/usr/local/bin/mafft", ncore = 1, zip.file)
 }
 \arguments{
-\item{sequences}{object of class \code{\link{DNAbin}} or \code{\link{AAbin}}
-containing unaligned sequences of DNA or amino acids.}
+\item{sequences}{An object of class \code{\link{DNAbin}} or
+\code{\link{AAbin}} containing unaligned sequences of DNA or amino acids.}
 
-\item{msa.exec}{character string giving the path to the executable of the
-alignment program (e.g. "/usr/local/bin/mafft"); Must be on of: 'mafft',
-'muscle', 'clustalo', 'clustalw2'}
+\item{bootstrap}{An integer giving the number of alternative MSAs to be
+computed.}
 
-\item{bootstrap}{integer giving the number of alternative MSAs to be computed}
+\item{method}{A character string containing further arguments passed to
+MAFFT; default is \code{"auto"}.}
 
-\item{ncore}{integer specifying the number of cores; default = 1 (serial),
-"auto" can be used for automated usage of all detected cores}
+\item{msa.exec}{A character string giving the path to the executable of the
+alignment program (e.g. \code{/usr/local/bin/mafft}); possible programs are
+\code{MAFFT}, \code{MUSCLE}, \code{ClustalO}, and \code{ClustalW}.}
 
-\item{method}{further argument passed to mafft, default is \code{"auto"}}
+\item{ncore}{An integer specifying the number of cores; default = 1 (i.e.
+serial execution); \code{"auto"} can be used for automated usage of all
+detected cores.}
+
+\item{zip.file}{A character string giving the name of zip-compressed file, which contains the 
+alternative MSAs. If left empty (default), the alternative
+MSA will not be stored and cannot be assessed by the user.}
 }
 \value{
-object of class \code{polenta}:
-
-msa original MSA as computed by \code{msa.program}
-
-scores residue pair score
+An object of class \code{\linkS4class{polentaDNA}} or
+  \code{\linkS4class{polentaAA}}.
 }
 \description{
-MSA reliability assessment GUIDANCE (Penn et al. 2010)
+Calculate MSA reliability scores with GUIDANCE (Penn et al.
+  2010).
 }
 \details{
 Calculates column confidence (and other scors) by comparing
@@ -43,7 +48,7 @@ Calculates column confidence (and other scors) by comparing
 \dontrun{
 # run GUIDANCE on example data using MAFFT
 file <- system.file("extdata", "BB50009.fasta", package = "polenta")
-aa_seq<- read.fas(file)
+aa_seq <- read.fas(file)
 g_res <- guidance(sequences = aa_seq)
 scores <- daughter_scores(g_res, score = c("gcsc", "rprsc"))
 hist(scores$gcsc$score, xlab = "Column score", main = "GUIDANCE")
@@ -51,15 +56,16 @@ hist(scores$gcsc$score, xlab = "Column score", main = "GUIDANCE")
 
 }
 \references{
-Felsenstein J. 1985. Confidence limits on phylogenies: an
-  approach using the bootstrap. Evolution 39:783–791
+Felsenstein, J. 1985. Confidence limits on phylogenies: an
+  approach using the bootstrap. \emph{Evolution} \strong{39}:783–791.
 
-Penn et al. (2010). An alignment confidence score capturing
-  robustness to guide tree uncertainty. Molecular Biology and Evolution
-  27:1759--1767
+Landan, G. and Graur, D. 2008. Local reliability measures from
+  sets of co-optimal multiple sequence alignments. \emph{Pacific Symposium on
+  Biocomputing} \strong{13}:15--24.
 
-G. Landan and D. Graur (2008). Local reliability measures from
-  sets of co-optimal multiple sequencesuence alignments. 13:15--24
+Penn, O., Privman, E., Landan, G., Graur, D. and Pupko, T. 2010.
+  An alignment confidence score capturing robustness to guide tree
+  uncertainty. \emph{Molecular Biology and Evolution} \strong{27}:1759--1767.
 }
 \seealso{
 \code{\link{msa_set_scoreR}}, \code{\link{guidance2}},

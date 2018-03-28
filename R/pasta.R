@@ -4,11 +4,10 @@
 #' @title Ultra-Large Multiple Sequence Alignment with PASTA
 #' @description Provides a complete reimplementation of the PASTA algorithm
 #'   (Mirarab, Nguyen, and Warnow 2014) in R.
-#' @param seqs An object of class \code{\link{DNAbin}} or \code{\link{AAbin}}
+#' @param seqs An object of class \code{"\link{DNAbin}"} or \code{"\link{AAbin}"}
 #'   containing unaligned sequences of DNA or amino acids.
 #' @param gt \emph{Currently unused.}
 #' @param k An integer giving the size of cluster in which the dataset is split.
-#' @param bootstrap An integer giving the number of bootstrap replicates.
 #' @param msa.program A character string giving the alignment program to use;
 #'   currently only \code{"mafft"} is possible.
 #' @param method A character string choosing a method of the alignment program;
@@ -20,17 +19,25 @@
 #'   or serial mode. \emph{Currently unused!}
 #' @param ncore An integer giving the number of cores to use in parallel mode.
 #'   \emph{Currently unused!}
-#' @return An object of class \code{\link{polentaDNA}}.
+#' @return An object of class \code{"\link[=polentaDNA-class]{polentaDNA}"}.
 #' @seealso \code{\link{extractMSA}} for extractiong the multiple sequence
-#'   alignment of an \code{polentaDNA} object.
-#' @importFrom foreach foreach
+#'   alignment of a \code{"\link[=polentaDNA-class]{polentaDNA}"} object.
+#' @importFrom ape del.gaps dist.dna dist.aa
+#' @import foreach
 #' @importFrom igraph as_edgelist
 #' @importFrom ips mafft mafft.merge
+#' @importFrom utils globalVariables
 #' @export
 
 pasta <- function(seqs, gt, k = 200,
                   msa.program = "mafft", method = "localpair", exec,
                   parallel = FALSE, ncore){
+  
+  ## declare i to be a global variable; this is necessary because
+  ## foreach uses non-standard evaluation that codetools is not aware of
+  ## [http://r.789695.n4.nabble.com/R-CMD-check-and-foreach-code-td4687660.html]
+  ## Does not work [CH 2018-01-23]
+  #globalVariables("i")
 
   ## remove gaps from aligned sequences
   ## ----------------------------------

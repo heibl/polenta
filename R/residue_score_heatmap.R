@@ -1,4 +1,4 @@
-#' Plot heatmap of cofidence on MSA
+#' @title Plot heatmap of cofidence on MSA
 #' @description Plots a heatmap of residue scores values on a MSA
 #' @param obj output of guidance, guidance2 or HoT
 #' @param file if a path is supplied the alignment is stored in a pdf, if file=NULL (default) alignment is promted
@@ -17,7 +17,7 @@
 confidence.heatmap <- function(obj, file = NULL, title, legend.text = TRUE,
                                guidance_score = TRUE){
 
-  if (!length(grep("score", names(obj)))>0)
+  if (!length(grep("score", names(obj))) > 0)
     stop("obj is not an output of guidance, guidance2 or HoT")
 
   txt <- as.vector(as.character(obj$base_msa))
@@ -33,7 +33,7 @@ confidence.heatmap <- function(obj, file = NULL, title, legend.text = TRUE,
   w <- coln/12
   h <- rown/6
 
-  p <- ggplot(mat,aes(col, residue)) +
+  p <- ggplot(mat, aes(col, res_mat)) + ## replaced 'residue' by 'res_mat' [CH-2017-110-8]
     geom_tile(aes(fill = score), colour = "white") +
     scale_fill_gradient2(low = "lightblue", mid = "white",
                          high = "purple", midpoint = 0.5, na.value = "gray80") +
@@ -66,7 +66,7 @@ confidence.heatmap <- function(obj, file = NULL, title, legend.text = TRUE,
   if (guidance_score){
     score = obj$residue_pair_column_score
     z <- zoo(score$col_score, score$col)
-    z <- merge(zoo(,1:max(score$col)), z)
+    z <- merge(zoo(1:max(score$col)), z)
     score <- data.frame(score = z)
     score <- data.frame(col = 1:dim(score)[1], score)
     score$score[is.na(score$score)] <- 0
@@ -81,14 +81,14 @@ confidence.heatmap <- function(obj, file = NULL, title, legend.text = TRUE,
 
   if (!is.null(file)){
     p <- p + geom_text(data = mat, aes(label = txt))
-    p <- plot_grid(p, p2, ncol = 1, nrow = 2, scale = c(1,1), rel_heights = c(1, 0.3))
+    p <- plot_grid(p, p2, ncol = 1, nrow = 2, scale = c(1, 1), rel_heights = c(1, 0.3))
     pdf(file, width = w, height = 10)
     print(p)
     dev.off()
   }
   if (is.null(file))
     if (guidance_score)
-      p <- plot_grid(p, p2, ncol = 1, nrow = 2, scale = c(1,1),
+      p <- plot_grid(p, p2, ncol = 1, nrow = 2, scale = c(1, 1),
                      rel_heights = c(1, 0.3))
   return(p)
 }

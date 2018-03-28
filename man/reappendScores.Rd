@@ -6,9 +6,16 @@
 \usage{
 reappendScores(v, merged, scored)
 }
+\arguments{
+\item{v}{XXX}
+
+\item{merged}{XXX}
+
+\item{scored}{XXX}
+}
 \description{
 Reappend scores to alignments after profile alignment.
 }
 \seealso{
-\code{\link{polentaDNA}}
+\code{"\link[=polentaDNA-class]{polentaDNA}"}
 }

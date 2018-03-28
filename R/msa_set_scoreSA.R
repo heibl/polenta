@@ -1,5 +1,5 @@
 ## This code is part of the polenta package
-## © F.-S. Krah (last update 2017-10-13)
+## © F.-S. Krah (last update 2017-11-08)
 
 #' @title Compare Reference MSAs with Alternative MSAs
 #' @description Wrapper function for program msa_set_score v2.01 of the GUIDANCE
@@ -15,7 +15,8 @@
 #' @param ref of class data.frame, is the reference MSA ('BASE MSA') with
 #'   sequences as columns
 #' @param alt path to alternative files
-#'
+#' @param bootstrap XXX.
+#' @param exec XXX.
 #' @return list containing following scores:
 #' @return mean_scores: residue pair score and mean column score
 #' @return column_score: identically aligned columns are asigned 1, otherwise 0;
@@ -56,7 +57,7 @@ msa_set_scoreSA <- function(ref, alt, exec = "/Users/krah/Documents/R/pkgs/polen
   fns <- tempfile(pattern = paste0("run", rn), tmpdir = tempdir(), fileext = ".fas")
   unlink(fns[file.exists(fns)])
 
-  if(!is.character(alt)){
+  if (!is.character(alt)){
     cat("list was supplied: writing MSAs to temporary files")
     dir.create(paste(tempdir(), "alt", sep = "/"))
     dir <- paste(tempdir(), "alt", sep = "/")
@@ -65,8 +66,9 @@ msa_set_scoreSA <- function(ref, alt, exec = "/Users/krah/Documents/R/pkgs/polen
       msa_out[i] <- tempfile(pattern = "mafft", tmpdir = dir, fileext = ".fas")
     unlink(msa_out[file.exists(msa_out)])
 
-    for(i in 1:bootstrap)
-      write.fas(msa[[i]], file = msa_out[i])
+    ## Undefined global functions or variables: msa [CH-2017-11-08]
+    # for (i in 1:bootstrap)
+    #   write.fas(msa[[i]], file = msa_out[i])
 
     write.fas(ref, fns[1])
     system(paste(exec, fns[1], paste0(tempdir(), "/alt"), "-d", dir),
@@ -76,7 +78,7 @@ msa_set_scoreSA <- function(ref, alt, exec = "/Users/krah/Documents/R/pkgs/polen
   ## Where is the executable? This will be obsolete when our own
   ## C code will be called.
   # exec <- "/Users/heibl/Documents/r/pkgs/polenta/src/msa_set_score_src/msa_set_score"
-  else{
+  else {
     if (!dir.exists(alt))
       stop("directory not found")
 

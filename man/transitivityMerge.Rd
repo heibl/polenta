@@ -7,7 +7,7 @@
 transitivityMerge(x, id = c(1, 2), exec)
 }
 \arguments{
-\item{x}{A list containing objects of class \code{\link{polentaDNA}}.}
+\item{x}{A list containing objects of class \code{"\link[=polentaDNA-class]{polentaDNA}"}.}
 
 \item{id}{An integer vector of length 2 indicating the two elements of 
 \code{x} that will be merged.}
@@ -18,7 +18,7 @@ trailing positions in the two MSAa that have no shared sequences. All other
 positions are merged by transitivity.}
 }
 \value{
-An object of class \code{\link{polentaDNA}}.
+An object of class \code{"\link[=polentaDNA-class]{polentaDNA}"}.
 }
 \description{
 Merges two multiple sequence alignments and their reliability 

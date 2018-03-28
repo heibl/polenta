@@ -1,5 +1,5 @@
 ## This code is part of the polenta package
-## © C. Heibl 2017, F.-S. Krah (last update 2017-08-18)
+## © C. Heibl 2017, F.-S. Krah (last update 2017-11-08)
 
 #' @title Ultra-Large Multiple Sequence Alignment with PASTA
 #' @description Provides a complete reimplementation of the PASTA algorithm
@@ -14,9 +14,10 @@
 #' @param exec A character string giving the path to the alignment program
 #'   executable.
 #' @param ncore An integer giving the number of cores to use in parallel mode.
-#' @return An object of class \code{\link{polentaDNA}}.
+#' @return An object of class \code{"\link[=polentaDNA-class]{polentaDNA}"}.
 #' @seealso \code{\link{extractMSA}} for extractiong the multiple sequence
-#'   alignment of an \code{polentaDNA} object.
+#'   alignment of a \code{"\link[=polentaDNA-class]{polentaDNA}"} object.
+#' @importFrom ape del.gaps dist.dna dist.aa
 #' @importFrom igraph as_edgelist
 #' @importFrom ips mafft mafft.merge
 #' @export
@@ -37,7 +38,7 @@ polenta <- function(seqs, gt, k = 200, bootstrap = 100,
 
     seqs <- guidance(seqs, ncore = ncore,
                      bootstrap = bootstrap,
-                     method = method, exec = exec)
+                     method = method, msa.exec = exec)
 
     ## more than k species will be aligned with PASTA
     ## ----------------------------------------------

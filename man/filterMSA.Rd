@@ -30,6 +30,8 @@ is in the output}
 \item{flag_a}{character specifying a path. If path is supplied function
 writes the filtered MSA into a fasta file. Additionally the function
 produces a file with the column score ready for RAxML input (flag -a)}
+
+\item{na.coding}{XXX.}
 }
 \value{
 masked MSA of class \code{AAbin} or \code{DNAbin}

@@ -1,5 +1,5 @@
 ## This code is part of the polenta package
-## © C. Heibl 2016 (last update 2017-10-11)
+## © C. Heibl 2016 (last update 2017-11-08)
 
 #' @title Split Phylogeny Equally
 #' @description Split a phylogenetic tree into two equally sized subtrees.
@@ -10,7 +10,7 @@
 #'   rooted or not.
 #' @seealso \code{\link{decomposePhyloRooted}} to decompose large phylogenetic trees
 #'   into subsets of a certain size.
-#' @importFrom ape drop.tip extract.clade
+#' @importFrom ape drop.tip extract.clade Ntip
 #' @importFrom ips descendants
 #' @export
 

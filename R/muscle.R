@@ -2,17 +2,22 @@
 # Code based on 'muscle' from ape
 # NEW: alignment of PROFILE1 and PROFILE2
 # NEW: guide-tree alignment
+
+#' @keywords internal
+#' @importFrom ape write.tree
 #' @export
 
 muscle2 <- function (x, y, gt, exec = "muscle", MoreArgs = "",
-                     quiet = TRUE, original.ordering = TRUE, file)
-{
-  if (missing(x)) {
-    out <- system(exec)
-    if (out == 127)
-      stop(.errorAlignment(exec, "MUSCLE"))
-    return(invisible(NULL))
-  }
+                     quiet = TRUE, original.ordering = TRUE, file){
+  
+  ## .errorAlignment is not exported by 'namespace:ape'
+  ## --------------------------------------------------
+  # if (missing(x)) {
+  #   out <- system(exec)
+  #   if (out == 127)
+  #     stop(.errorAlignment(exec, "MUSCLE"))
+  #   return(invisible(NULL))
+  # }
 
   # Produce TEMP files
   fns <- vector(length = 4)
@@ -51,8 +56,8 @@ muscle2 <- function (x, y, gt, exec = "muscle", MoreArgs = "",
     }
 
     out <- system(paste(exec, opts), ignore.stdout = TRUE,  ignore.stderr = TRUE)
-    if (out == 127)
-      stop(.errorAlignment(exec, "MUSCLE"))
+    # if (out == 127)
+    #   stop(.errorAlignment(exec, "MUSCLE"))
     res <- read.fas(fns[3])
     if (original.ordering)
       res <- res[labels(x), ]
@@ -70,8 +75,8 @@ muscle2 <- function (x, y, gt, exec = "muscle", MoreArgs = "",
       opts <- paste(opts, "-quiet")
     opts <- paste(opts, MoreArgs)
     out <- system(paste(exec, opts),ignore.stdout = TRUE, ignore.stderr = TRUE)
-    if (out == 127)
-      stop(.errorAlignment(exec, "MUSCLE"))
+    # if (out == 127)
+    #   stop(.errorAlignment(exec, "MUSCLE"))
     res <- read.fas(fns[3])
     if (original.ordering)
       res <- res[c(labels(x), labels(y)), ]

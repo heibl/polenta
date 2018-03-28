@@ -7,10 +7,12 @@
 extractMSA(x)
 }
 \arguments{
-\item{x}{An object of class \code{\link{polentaDNA}} or \code{\link{polentaAA}}.}
+\item{x}{An object of class \code{"\link[=polentaDNA-class]{polentaDNA}"} or
+\code{"\link[=polentaAA-class]{polentaAA}"}.}
 }
 \description{
-Extract DNA or amino acid sequences from \code{polenta*} objects.
+Extract DNA or amino acid sequences from \code{polenta*}
+  objects.
 }
 \author{
 Christoph Heibl

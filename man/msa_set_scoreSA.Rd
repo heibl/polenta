@@ -13,6 +13,10 @@ msa_set_scoreSA(ref, alt,
 sequences as columns}
 
 \item{alt}{path to alternative files}
+
+\item{exec}{XXX.}
+
+\item{bootstrap}{XXX.}
 }
 \value{
 list containing following scores:

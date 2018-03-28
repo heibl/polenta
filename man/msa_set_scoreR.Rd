@@ -7,28 +7,28 @@
 msa_set_scoreR(ref, alt)
 }
 \arguments{
-\item{ref}{MSA of class \code{\link{AAbin}} or \code{\link{bin}}}
+\item{ref}{An object of class \code{\link{DNAbin}} or \code{\link{AAbin}}
+containing \strong{aligned} sequences of DNA or amino acids.}
 
-\item{alt}{single MSA or list of MSAs or path to alternative files. Single MSAs and list members should be of class \code{\link{AAbin}} or \code{\link{DNAbin}}}
-
-\item{bootstrap}{number of alt MSAs}
-
-\item{na.rm}{logical if gap comparisons should be deleted}
+\item{alt}{single MSA or list of MSAs or path to alternative files. Single
+MSAs and list members should be of class \code{\link{DNAbin}} or
+\code{\link{AAbin}}.}
 }
 \value{
 matrix containing following scores:
 
-residue_pair_score: if one alternative MSA is supplied then the score is 1
-  if a residue pair was identically aligned as in the reference MSA and 0
-  otherwise. If more than one alternative MSA is used, then the average of the residue pair scores from all comparisons
+residue_pair_score: if one alternative MSA is supplied then the score
+  is 1 if a residue pair was identically aligned as in the reference MSA and
+  0 otherwise. If more than one alternative MSA is used, then the average of
+  the residue pair scores from all comparisons
 }
 \description{
 MSA reliability scores (Penn et al. 2010)
 }
 \references{
-Penn et al. (2010). An alignment confidence score capturing
-  robustness to guide tree uncertainty. Molecular Biology and Evolution
-  27:1759--1767
+Penn et al. 2010. An alignment confidence score capturing
+  robustness to guide tree uncertainty. \emph{Molecular Biology and
+  Evolution} \strong{27}:1759--1767.
 }
 \seealso{
 \code{\link{msa_set_scoreSA}}

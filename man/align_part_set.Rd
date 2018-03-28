@@ -7,6 +7,23 @@
 align_part_set(x, partition_set, msa.exec, method, msa.program,
   coopt.sub = "all")
 }
+\arguments{
+\item{x}{XXX}
+
+\item{partition_set}{XXX}
+
+\item{msa.exec}{XXX}
+
+\item{method}{XXX}
+
+\item{msa.program}{XXX}
+
+\item{coopt.sub}{XXX}
+}
 \description{
-Co-optimal alignments from tree partitions
+Produce co-optimal MSAs from the N-3 bipartitions of the
+  starting tree. This function performs one iteration i 1: Take i partition
+  and align both sides Heads (H) and Tails (T) and we get H1,H2 and T1, T2 2:
+  align combinations again Heads and Tails: H1H2, H1T1, H1T2, T1T2 => 8
+  combinations
 }

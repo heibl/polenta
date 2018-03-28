@@ -1,5 +1,5 @@
 ## This code is part of the polenta package
-## © F.-S. Krah, C. Heibl 2017 (last update 2017-10-13)
+## © F.-S. Krah, C. Heibl 2017 (last update 2017-11-13)
 
 #' @title Score Calculation
 #' @description Calculate additional scores based on residue pair score.
@@ -26,9 +26,9 @@
 #' @return data.frame or list of data.frames with scores
 #' @seealso \code{\link{filterMSA}}
 #' @author Franz-Sebastian Krah
-#' @importFrom foreach foreach
+#' @import foreach
 #' @import parallel
-#' @importFrom utils combn
+#' @importFrom utils combn globalVariables
 #' @export
 
 scores <- function(polenta,
@@ -38,6 +38,12 @@ scores <- function(polenta,
   if (!inherits(polenta, c("polentaDNA", "polentaAA"))){
     stop("rpsc not if class 'polenta'")
   }
+  
+  ## declare i to be a global variable; this is necessary because
+  ## foreach uses non-standard evaluation that codetools is not aware of
+  ## [http://r.789695.n4.nabble.com/R-CMD-check-and-foreach-code-td4687660.html]
+  ## Does not work [CH 2018-01-23]
+  # globalVariables("i")
 
   sc <- polenta@scores
   base.msa <- polenta@msa
@@ -83,7 +89,7 @@ scores <- function(polenta,
     residue <- do.call(rbind, residue)
     colnames(residue) <- 1:ncol(residue)
     rownames(residue) <- rownames(base.msa)
-    if(na.rm){
+    if (na.rm){
       residue <- residue[, !apply(residue, 2, function(x) !any(!is.na(x)))]
     }
   }

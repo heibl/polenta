@@ -14,6 +14,7 @@
 #' @param flag_a character specifying a path. If path is supplied function
 #'   writes the filtered MSA into a fasta file. Additionally the function
 #'   produces a file with the column score ready for RAxML input (flag -a)
+#' @param na.coding XXX.
 #' @return masked MSA of class \code{AAbin} or \code{DNAbin}
 #' @return column_score is optional
 #' @seealso \code{\link{scores}}
@@ -57,7 +58,7 @@ filterMSA <- function(polenta,
 
   if (!seq.cutoff == FALSE) {
     s_sc <- scores(polenta, score = "sequence")
-    base.msa <- base.msa[s_sc$sequence$score >= seq.cutoff,]
+    base.msa <- base.msa[s_sc$sequence$score >= seq.cutoff, ]
   }
 
   if (filter.ends) {
@@ -73,9 +74,10 @@ filterMSA <- function(polenta,
     keep <- Reduce(intersect, keep)
     base.msa <- base.msa[, keep]
 
-    g_sc <- scores(g_r, score = "column", na.rm = FALSE)
+    ## 'g_r' replaced by 'polenta' [CH-2017-11-08]  
+    g_sc <- scores(polenta, score = "column", na.rm = FALSE)
     g_sc <- g_sc$column[keep, ]
-    g_sc[is.na(g_sc$score),]$score <- na.coding
+    g_sc[is.na(g_sc$score), ]$score <- na.coding
   }
 
   if (!flag_a == FALSE) {

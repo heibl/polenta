@@ -28,7 +28,7 @@ executable.}
 \item{ncore}{An integer giving the number of cores to use in parallel mode.}
 }
 \value{
-An object of class \code{\link{polentaDNA}}.
+An object of class \code{"\link[=polentaDNA-class]{polentaDNA}"}.
 }
 \description{
 Multiple Sequence Alignment with PASTA and GUIDANCE:
@@ -43,5 +43,5 @@ Provides a complete reimplementation of the PASTA algorithm
 }
 \seealso{
 \code{\link{extractMSA}} for extractiong the multiple sequence
-  alignment of an \code{polentaDNA} object.
+  alignment of a \code{"\link[=polentaDNA-class]{polentaDNA}"} object.
 }

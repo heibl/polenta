@@ -6,7 +6,7 @@
 \usage{
 HoT(sequences, method = "auto", bootstrap, n.coopt = "auto",
   plot_guide = TRUE, store_msas = FALSE,
-  msa.exec = "/usr/local/bin/mafft", ncore = 1)
+  msa.exec = "/usr/local/bin/mafft", ncore = 1, zip.file)
 }
 \arguments{
 \item{sequences}{object of class \code{\link{DNAbin}} or \code{\link{AAbin}}
@@ -28,6 +28,8 @@ alignment program (e.g. "/usr/local/bin/mafft"); Must be on of: 'mafft',
 
 \item{ncore}{integer specifying the number of cores; default = 1 (serial),
 "auto" can be used for automated usage of all detected cores.}
+
+\item{zip.file}{A character string giving the name for the output zip file.}
 }
 \value{
 object of class \code{polenta}: msa original MSA as computed by
@@ -44,7 +46,7 @@ Calculates column reliability (and other scors) by comparing
   sequences.
 }
 \references{
-G. Landan and D. Graur (2008). Local reliability measures from
+G. Landan and D. Graur. 2008. Local reliability measures from
   sets of co-optimal multiple sequencesuence alignments. 13:15--24
 }
 \seealso{

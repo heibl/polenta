@@ -1,10 +1,13 @@
-# [FK 2017-03-30]
+# [FK 2017-11-08]
 # Code based on 'clustalomega'  from ape
 # NEW: alignment of PROFILE1 and PROFILE2
 # NEW: guide-tree alignment
+
+#' @keywords internal
+#' @importFrom ape write.tree
 #' @export
 
-clustalo <- function (x, y, gt, exec = NULL,MoreArgs = "",
+clustalo <- function (x, y, gt, exec = NULL, MoreArgs = "",
                       quiet = TRUE, original.ordering = TRUE, file)
 {
   os <- Sys.info()[1]
@@ -12,12 +15,15 @@ clustalo <- function (x, y, gt, exec = NULL,MoreArgs = "",
     exec <- switch(os, Linux = "clustalo", Darwin = "clustalo",
                    Windows = "clustalo.exe")
   }
-  if (missing(x)) {
-    out <- system(paste(exec, "-h"))
-    if (out == 127)
-      stop(.errorAlignment(exec, "Clustal-Omega"))
-    return(invisible(NULL))
-  }
+  
+  ## .errorAlignment is not exported by 'namespace:ape'
+  ## --------------------------------------------------
+  # if (missing(x)) {
+  #   out <- system(paste(exec, "-h"))
+  #   if (out == 127)
+  #     stop(.errorAlignment(exec, "Clustal-Omega"))
+  #   return(invisible(NULL))
+  # }
 
   type <- class(x)
   type <- gsub("bin", "", type)
@@ -52,13 +58,13 @@ clustalo <- function (x, y, gt, exec = NULL,MoreArgs = "",
       if (is.null(gt$edge.length))
         gt$edge.length <- rep(1, nrow(gt$edge))
       write.tree(gt, fns[4])
-      gt <- paste("--guidetree-in ", fns[4], sep="")
+      gt <- paste0("--guidetree-in ", fns[4])
       opts <- paste(opts, gt)
     }
     opts <- paste(opts, MoreArgs)
     out <- system(paste(exec, opts), ignore.stdout = quiet)
-    if (out == 127)
-      stop(.errorAlignment(exec, "Clustal-Omega"))
+    # if (out == 127)
+    #   stop(.errorAlignment(exec, "Clustal-Omega"))
     res <- read.fas(fns[2])
     if (original.ordering)
       res <- res[labels(x), ]
@@ -66,30 +72,29 @@ clustalo <- function (x, y, gt, exec = NULL,MoreArgs = "",
     res
   }
 
-
   if (!missing(y)){
     y <- as.list(y)
     labels.baky <- names(y)
     write.fas(y, fns[2])
     names(y) <- paste0("Id", (length(x) + 1):(length(x) + length(y)))
-    if (length(y)==1){
+    if (length(y) == 1){
       opts <- paste("-i", fns[1],"--profile1",
                     fns[2], "-o", fns[3], "--force")
-    } else{
+    } else {
       opts <- paste("--profile1", fns[1],"--profile2",
                     fns[2], "-o", fns[3], "--force")
     }
     opts <- paste(opts, MoreArgs)
     out <- system(paste(exec, opts), ignore.stdout = quiet)
-    if (out == 127)
-      stop(.errorAlignment(exec, "Clustal-Omega"))
+    # if (out == 127)
+    #   stop(.errorAlignment(exec, "Clustal-Omega"))
     res <- read.fas(fns[3])
     rownames(res) <- c(labels.bak, labels.baky)
     res
   }
   unlink(fns[file.exists(fns)])
   # unlink(gtt[file.exists(gtt)])
-  if(!missing(file)){
+  if (!missing(file)){
     write.fas(res, file)
   } else{
     return(res)

@@ -1,5 +1,5 @@
 ## This code is part of the rpg package
-## © C. Heibl 2017 (last update 2017-10-13)
+## © C. Heibl 2017 (last update 2017-11-08)
 
 #' @title Spanning Tree for PASTA
 #' @description Creates miminum spanning tree connecting subsets obtained by
@@ -8,7 +8,7 @@
 #'   phylogenetic tree.
 #' @param subtrees A list containing object of class \code{\link{phylo}} as
 #'   obtained with \code{\link{centroidDecomposition}}.
-#' @importFrom ape drop.tip
+#' @importFrom ape drop.tip makeNodeLabel
 #' @importFrom ips terminalSisters
 #' @importFrom igraph add_edges degree delete.vertices graph_from_edgelist
 #'   neighbors vertex_attr vertex_attr<-

@@ -8,7 +8,7 @@ Authors: c(
 Author: Christoph Heibl [aut, cre], Franz-Sebastian Krah [aut]
 Maintainer: Christoph Heibl <christoph.heibl@npv-bw.bayern.de>
 Description: PASTA (Mirarab, Nguyen, and Warnow 2014) is a highly accurate and scalable algorithm for multiple sequence alignment. GUIDANCE  (Penn, Privman, Landan, Grauer, and Pupko 2010) is a well-performing method for the assessment of alignment uncertainty. Both methods are available as stand-alone programs, but, unfortunately, cannot be combined. This package provides a reimplementation of PASTA and GUIDANCE to combine their power to accurately align large numbers of sequences.
-License: GPL-3
+License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
@@ -34,7 +34,6 @@ Imports:
 LinkingTo: Rcpp
 RoxygenNote: 6.0.1
 Collate: 
-    'BPtree_from_MSA.R'
     'HoT.R'
     'HoT_in_GUIDANCE2.R'
     'RcppExports.R'
@@ -50,10 +49,8 @@ Collate:
     'guidance.R'
     'guidance2.R'
     'guidanceSA.R'
-    'hello.R'
-    'mafft_dev.R'
-    'merge.R'
     'msaBP.R'
+    'msaBP_nj_tree.R'
     'msa_set_scoreR.R'
     'msa_set_scoreSA.R'
     'muscle.R'

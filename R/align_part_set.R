@@ -1,9 +1,16 @@
-#' Co-optimal alignments from tree partitions
-# Produce co-optimal MSAs from the N-3 bipartitions of the starting tree
-# This function performs one iteration i
-# 1: Take i partition and align both sides Heads (H) and Tails (T)
-# and we get H1,H2 and T1, T2
-# 2: align combinations again Heads and Tails: H1H2, H1T1, H1T2, T1T2 => 8 combinations
+#' @title Co-optimal alignments from tree partitions
+#' @description  Produce co-optimal MSAs from the N-3 bipartitions of the
+#'   starting tree. This function performs one iteration i 1: Take i partition
+#'   and align both sides Heads (H) and Tails (T) and we get H1,H2 and T1, T2 2:
+#'   align combinations again Heads and Tails: H1H2, H1T1, H1T2, T1T2 => 8
+#'   combinations
+#' @param x XXX
+#' @param partition_set XXX
+#' @param msa.exec XXX
+#' @param method XXX
+#' @param msa.program XXX
+#' @param coopt.sub XXX
+#' @importFrom ips mafft
 #' @export
 
 
@@ -68,7 +75,7 @@ align_part_set <- function(x, partition_set, msa.exec,
                     method = method, exec = msa.exec)
     }
     # tailsA - headsB - TAILS
-    if(6 %in% coopt.sub){
+    if (6 %in% coopt.sub){
       msa6 <- mafft(rev_DNA(tailsA), rev_DNA(headsB), add = "add",
                     method= method, exec = msa.exec)
       msa6 <- rev_DNA(msa6)
@@ -110,7 +117,7 @@ align_part_set <- function(x, partition_set, msa.exec,
 
     if (2 %in% coopt.sub){
       msa2 <- muscle2(x = rev_DNA(headsA), y = rev_DNA(headsB),
-                      exec = exec)
+                      exec = msa.exec)
       msa2 <- rev_DNA(msa2)
     }
     if (3 %in% coopt.sub)
@@ -140,96 +147,95 @@ align_part_set <- function(x, partition_set, msa.exec,
 
   ## CLUSTAL
   ###########
-  if(msa.program == "clustalo"){
+  if (msa.program == "clustalo"){
     if (length(seq_left) == 1){
       headsA <-  seq_left
       tailsA <- rev_DNA(seq_left)
-    }else{
+    } else {
       headsA <- clustalo(seq_left, exec = msa.exec)
       tailsA <- clustalo(rev_DNA(seq_left), exec = msa.exec)
     }
-    if (length(seq_right) ==1){
+    if (length(seq_right) == 1){
       headsB <-  seq_right
       tailsB <- rev_DNA(seq_right)
-    }else{
+    } else {
       headsB <- clustalo(seq_right,  exec = msa.exec)
-      tailsB <- clustalo(rev_DNA(seq_right),exec = msa.exec)
+      tailsB <- clustalo(rev_DNA(seq_right), exec = msa.exec)
     }
-    if(1 %in% coopt.sub)
-      msa1 <- clustalo(x = headsA, y = headsB,exec = msa.exec)
-    if(2 %in% coopt.sub){
+    if (1 %in% coopt.sub)
+      msa1 <- clustalo(x = headsA, y = headsB, exec = msa.exec)
+    if (2 %in% coopt.sub){
       msa2 <- clustalo(x = rev_DNA(headsA), y = rev_DNA(headsB),
                        exec = msa.exec)
       msa2 <- rev_DNA(msa2)
     }
-    if(3 %in% coopt.sub)
+    if (3 %in% coopt.sub)
       msa3 <- clustalo(headsA, rev_DNA(tailsB), exec = msa.exec)
-    if(4 %in% coopt.sub){
+    if (4 %in% coopt.sub){
       msa4 <- clustalo(rev_DNA(headsA), tailsB, exec = msa.exec)
       msa4 <- rev_DNA(msa4)
     }
-    if(5 %in% coopt.sub)
+    if (5 %in% coopt.sub)
       msa5 <- clustalo(rev_DNA(tailsA), headsB, exec = msa.exec)
-    if(6 %in% coopt.sub){
+    if (6 %in% coopt.sub){
       msa6 <- clustalo(tailsA, rev_DNA(headsB), exec = msa.exec)
       msa6 <- rev_DNA(msa6)
     }
-    if(7 %in% coopt.sub)
+    if (7 %in% coopt.sub)
       msa7 <- clustalo(rev_DNA(tailsA), rev_DNA(tailsB), exec = msa.exec)
-    if(8 %in% coopt.sub){
+    if (8 %in% coopt.sub){
       msa8 <- clustalo(tailsA, tailsB,  exec = msa.exec)
       msa8 <- rev_DNA(msa8)
     }
-    list.msas <- paste(paste("msa", coopt.sub, sep=""), collapse =",")
-    comb_msas <- eval(parse(text = paste("list(", list.msas, ")", sep="")))
+    list.msas <- paste(paste0("msa", coopt.sub), collapse = ",")
+    comb_msas <- eval(parse(text = paste0("list(", list.msas, ")")))
   }
-
 
   ## CLUSTALW2
   #############
-  if(msa.program == "clustalw2"){
+  if (msa.program == "clustalw2"){
     if (length(seq_left) == 1){
       headsA <-  seq_left
       tailsA <- rev_DNA(seq_left)
-    }else{
+    } else {
       headsA <- clustalw2(seq_left, exec = msa.exec)
       tailsA <- clustalw2(rev_DNA(seq_left), exec = msa.exec)
     }
-    if (length(seq_right) ==1){
+    if (length(seq_right) == 1){
       headsB <-  seq_right
       tailsB <- rev_DNA(seq_right)
-    }else{
+    } else {
       headsB <- clustalw2(seq_right,  exec = msa.exec)
-      tailsB <- clustalw2(rev_DNA(seq_right),exec = msa.exec)
+      tailsB <- clustalw2(rev_DNA(seq_right), exec = msa.exec)
     }
-    if(1 %in% coopt.sub)
-      msa1 <- clustalw2(x = headsA, y = headsB,exec = msa.exec)
-    if(2 %in% coopt.sub){
+    if (1 %in% coopt.sub)
+      msa1 <- clustalw2(x = headsA, y = headsB, exec = msa.exec)
+    if (2 %in% coopt.sub){
       msa2 <- clustalw2(x = rev_DNA(headsA), y = rev_DNA(headsB),
                         exec = msa.exec)
       msa2 <- rev_DNA(msa2)
     }
-    if(3 %in% coopt.sub){
+    if (3 %in% coopt.sub){
       msa3 <- clustalw2(headsA, rev_DNA(tailsB), exec = msa.exec)
     }
-    if(4 %in% coopt.sub){
+    if (4 %in% coopt.sub){
       msa4 <- clustalw2(rev_DNA(headsA), tailsB, exec = msa.exec)
       msa4 <- rev_DNA(msa4)
     }
-    if(5 %in% coopt.sub)
+    if (5 %in% coopt.sub)
       msa5 <- clustalw2(rev_DNA(tailsA), headsB, exec = msa.exec)
-    if(6 %in% coopt.sub){
+    if (6 %in% coopt.sub){
       msa6 <- clustalw2(tailsA, rev_DNA(headsB), exec = msa.exec)
       msa6 <- rev_DNA(msa6)
     }
-    if(7 %in% coopt.sub)
+    if (7 %in% coopt.sub)
       msa7 <- clustalw2(rev_DNA(tailsA), rev_DNA(tailsB), exec = msa.exec)
-    if(8 %in% coopt.sub){
+    if (8 %in% coopt.sub){
       msa8 <- clustalw2(tailsA, tailsB,  exec = msa.exec)
       msa8 <- rev_DNA(msa8)
     }
-    list.msas <- paste(paste("msa", coopt.sub, sep=""), collapse =",")
-    comb_msas <- eval(parse(text = paste("list(", list.msas, ")", sep="")))
+    list.msas <- paste(paste("msa", coopt.sub, sep=""), collapse = ",")
+    comb_msas <- eval(parse(text = paste0("list(", list.msas, ")")))
   }
   return(comb_msas)
 }

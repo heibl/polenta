@@ -1,9 +1,12 @@
 ## This code is part of the polenta package
-## © C. Heibl 2017 (last update 2017-05-09)
+## © C. Heibl 2017 (last update 2017-11-08)
 
 #' @title Reappend Scores after Merging
 #' @description Reappend scores to alignments after profile alignment.
-#' @seealso \code{\link{polentaDNA}}
+#' @param v XXX
+#' @param merged XXX
+#' @param scored XXX
+#' @seealso \code{"\link[=polentaDNA-class]{polentaDNA}"}
 #' @export
 
 reappendScores <- function(v, merged, scored){

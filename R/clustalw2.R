@@ -2,6 +2,9 @@
 # Code based on 'clustal'  from ape
 # NEW: alignment of PROFILE1 and PROFILE2
 # NEW: guide-tree alignment
+
+#' @keywords internal
+#' @importFrom ape write.tree
 #' @export
 
 clustalw2 <- function (x, y, gt, pw.gapopen = 10, pw.gapext = 0.1, gapopen = 10,
@@ -12,12 +15,15 @@ clustalw2 <- function (x, y, gt, pw.gapopen = 10, pw.gapext = 0.1, gapopen = 10,
     exec <- switch(os, Linux = "clustalw", Darwin = "clustalw2",
                    Windows = "clustalw2.exe")
   }
-  if (missing(x)) {
-    out <- system(paste(exec, "-help"))
-    if (out == 127)
-      stop(.errorAlignment(exec, "Clustal"))
-    return(invisible(NULL))
-  }
+  
+  ## .errorAlignment is not exported by 'namespace:ape'
+  ## --------------------------------------------------
+  # if (missing(x)) {
+  #   out <- system(paste(exec, "-help"))
+  #   if (out == 127)
+  #     stop(.errorAlignment(exec, "Clustal"))
+  #   return(invisible(NULL))
+  # }
 
   fns <- vector(length = 4)
   for (i in seq_along(fns))
@@ -30,7 +36,7 @@ clustalw2 <- function (x, y, gt, pw.gapopen = 10, pw.gapext = 0.1, gapopen = 10,
   names(x) <- paste0("Id", 1:length(x))
   write.fas(x, fns[1])
 
-  if(missing(y)){
+  if (missing(y)){
     prefix <- c("-INFILE", "-PWGAPOPEN", "-PWGAPEXT", "-GAPOPEN","-GAPEXT", "-OUTFILE","-OUTPUT")
     suffix <- c(fns[1], pw.gapopen, pw.gapext, gapopen, gapext, fns[3], "FASTA")
     opts <- paste(prefix, suffix, sep = "=", collapse = " ")
@@ -47,14 +53,14 @@ clustalw2 <- function (x, y, gt, pw.gapopen = 10, pw.gapext = 0.1, gapopen = 10,
       if (is.null(gt$edge.length))
         gt$edge.length <- rep(1, nrow(gt$edge))
       write.tree(gt, fns[4])
-      gt <- paste("-USETREE=", fns[4], sep="")
+      gt <- paste0("-USETREE=", fns[4])
       opts <- paste(opts, gt)
     }
 
     opts <- paste(opts, MoreArgs)
     out <- system(paste(exec, opts), ignore.stdout = quiet)
-    if (out == 127)
-      stop(.errorAlignment(exec, "Clustal"))
+    # if (out == 127)
+    #   stop(.errorAlignment(exec, "Clustal"))
     res <- read.fas(fns[3])
     if (original.ordering)
       res <- res[labels(x), ]
@@ -75,8 +81,8 @@ clustalw2 <- function (x, y, gt, pw.gapopen = 10, pw.gapext = 0.1, gapopen = 10,
     opts <- paste(prefix, suffix, sep = "=", collapse = " ")
     opts <- paste(opts, MoreArgs)
     out <- system(paste(exec, opts), ignore.stdout = quiet)
-    if (out == 127)
-      stop(.errorAlignment(exec, "Clustal"))
+    # if (out == 127)
+    #   stop(.errorAlignment(exec, "Clustal"))
     res <- read.fas(fns[3])
     if (original.ordering)
       res <- res[c(labels(x), labels(y)), ]
@@ -85,7 +91,7 @@ clustalw2 <- function (x, y, gt, pw.gapopen = 10, pw.gapext = 0.1, gapopen = 10,
   }
   unlink(fns[file.exists(fns)])
   # unlink(gtt[file.exists(gtt)])
-  if(!missing(file)){
+  if (!missing(file)){
     write.fas(res, file)
   } else {
     return(res)

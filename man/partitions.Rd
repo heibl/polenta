@@ -2,12 +2,14 @@
 % Please edit documentation in R/partitions.R
 \name{partitions}
 \alias{partitions}
-\title{Create n-3 partitions from tree
- @export}
+\title{Create N-3 Partitions from Phylogeny}
 \usage{
 partitions(tree)
 }
+\arguments{
+\item{tree}{A phylogenetic tree of class \code{\link{phylo}}.}
+}
 \description{
-Create n-3 partitions from tree
- @export
+A wrapper to \code{\link{treePart}} from the \strong{adephylo}
+  package.
 }

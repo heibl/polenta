@@ -1,11 +1,12 @@
-## This code is part of the rpg package
-## © C. Heibl 2016 (2017-03-15)
+## This code is part of the polenta package
+## © C. Heibl 2016 (2017-11-08)
 
 #' @title Centroid Decomposition of Phylogenetic Trees
 #' @description Splits a phylogenetic tree into a number of subtree
 #' with size at most k.
 #' @param phy An object of class \code{\link{phylo}}.
 #' @param k An integer giving the upper size limit of subtrees.
+#' @importFrom ape Ntip
 #' @importFrom ips unlistFirstLevel
 #' @export
 
