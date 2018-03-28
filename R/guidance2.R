@@ -151,7 +151,7 @@ guidance2 <- function(sequences,
       msa_out[i] <- tempfile(pattern = "mafft", tmpdir = tempdir(), fileext = ".fas")
     for (i in 1:(bootstrap * n.coopt))
       msa_out[i + bootstrap] <- tempfile(pattern = "HoT", tmpdir = tempdir(), fileext = ".fas")
-    unlink(msa_out[file.exists(msa_out)])
+    # unlink(msa_out[file.exists(msa_out)])
   }
   
   ## Align perturbated MSAs (GUIDANCE)
@@ -201,7 +201,9 @@ guidance2 <- function(sequences,
   msa_out <- foreach(i = 1:bootstrap, .packages = c('ips', 'ape', 'polenta'),
                      .export = c("sequences", "nj_guidetrees", "msa.exec", "method"),
                      .options.snow = opts)  %dopar% {
+                       
                        eval(parse(text = FUN(i)))
+                       
                      }
   stopCluster(cl)
   close(pb)

@@ -1,22 +1,10 @@
-library("ips")
-# library("parallel")
-# library("foreach")
-# library("phangorn")
-# library("doSNOW")
-# library("adephylo")
-# library("useful")
-# library("stringr")
-# library("scales")
-# library("ggplot2")
-# library("zoo")
-# library("cowplot")
-
 library("polenta")
+library("ape")
 
 # Sequences --------------------------------------------------------------
 
 ## DNA
-seq_dna <- read.fas("dev/data/cortinarius_28s_ms.fas")
+seq_dna <- read.FASTA("dev/data/cortinarius_28s_ms.fas")
 set.seed(100)
 seq_dna <- sample(seq_dna, 10)
 
@@ -31,15 +19,13 @@ exec <- "/usr/local/bin/mafft"
 # exec <- "/Applications/muscle"
 exec <- "/Applications/guidance.v2.02/"
 
-sequences = seq_dna
+seq = seq_dna
 msa.exec = exec
 bootstrap = 100
 ncore = 4
 method = "retree 1"
 score_method = "Rcpp"
 
-
-seq <- seq_dna
 
 # Guidance --------------------------------------------------------------
 
