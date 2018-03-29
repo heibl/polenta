@@ -114,8 +114,8 @@ guidance <- function(sequences,
   }
 
   ## if more than 200 species intermediate results are processed via files
-  int_file <- ifelse(length(sequences) > 200, TRUE, FALSE)
-
+  # int_file <- ifelse(length(sequences) > 200, TRUE, FALSE)
+  int_file <- FALSE
   ##############################################
   ## PART I
   ##############################################
@@ -161,7 +161,7 @@ guidance <- function(sequences,
     for (i in seq_along(msa_out))
       msa_out[i] <- tempfile(pattern = "mafft",
                              tmpdir = tempdir(), fileext = ".fas")
-    unlink(msa_out[file.exists(msa_out)])
+    # unlink(msa_out[file.exists(msa_out)])
   }
 
   ## Construct alignment function

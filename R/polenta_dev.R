@@ -22,7 +22,7 @@
 #' @importFrom ips mafft mafft.merge
 #' @export
 
-polenta <- function(seqs, gt, k = 200, bootstrap = 100,
+polenta_dev <- function(seqs, gt, k = 200, bootstrap = 100,
   method = "auto", exec, ncore){
   
   ## remove gaps from aligned sequences
@@ -48,14 +48,19 @@ polenta <- function(seqs, gt, k = 200, bootstrap = 100,
     ## Should be replaced by the method used by Mirarab and Warnow
     ## or perhaps a hybrid with taxonomy.
     if (missing(gt)){
-      gt <- mafft(seqs, method = "auto")
-      if (inherits(gt, "DNAbin")){
-        gt <- dist.dna(gt, model = "F81")
-      } else {
-        gt <- dist.aa(gt)
-      }
-      gt <- nj(gt)
+      gt <- mafft(seqs, method = method)
+      # if (inherits(gt, "DNAbin")){
+      #   gt <- dist.dna(gt, model = "F81")
+      # } else {
+      #   gt <- dist.aa(gt)
+      # }
+      # gt <- nj(gt)
+      
+      gt <- phangorn::dist.ml(phangorn::as.phyDat(gt), model = "F81")
+      gt  <- phangorn::NJ(gt)
     }
+    
+
     
     ## split dataset in subsets of size <= k
     ## -------------------------------------
@@ -73,14 +78,19 @@ polenta <- function(seqs, gt, k = 200, bootstrap = 100,
     seqs <- lapply(subtrees, foo, seqs = seqs)
     names(seqs) <- names(subtrees)
     
+    # seqs_test <- seqs
+    # seqs <- seqs_test
+    
     ## special case: there are only two subMSAa and they will be simply merged
     ## with out transitivity merging
     if (length(seqs) == 2){
       
       seqlist <- extractMSA(seqs)
-      seqlist <- list(mafft.merge(seqlist, method = method, exec = exec))
+      seqlist <- list(ips::mafft.merge(seqlist, method = method, exec = exec))
       names(seqlist) <- paste(names(seqs), collapse = "-")
-      seqs <- reappendScores(names(seqs), merged = seqlist, scored = seqs)
+      seqlist <- seqlist[[1]]
+      # seqs <- reappendScores(names(seqs), merged = seqlist, scored = seqs)
+      seqs <- reappendScores_gen_dev(v = seqs, s = seqlist)
       
     } else {
       ## compute spanning tree of subsets
@@ -98,11 +108,11 @@ polenta <- function(seqs, gt, k = 200, bootstrap = 100,
       seqlist <- apply(e, 1, merger, seqlist = seqlist, exec = exec)
       names(seqlist) <- paste(e[, 1], e[, 2], sep = "-")
       
+      
       ## reappend scores to merged alignments
       ## ------------------------------------
-      seqs <- apply(e, 1, reappendScores, merged = seqlist, scored = seqs)
-      names(seqs) <- paste(e[, 1], e[, 2], sep = "-")
-      
+
+      # 
       ## do transitivity merging
       ## -----------------------
       # load("devworkspace.rda")
@@ -110,7 +120,7 @@ polenta <- function(seqs, gt, k = 200, bootstrap = 100,
       ## calculate pairings for transitivity merging
       ## this is probably very inefficient
       
-      vertex.set <- strsplit(names(seqs), "-")
+      vertex.set <- strsplit(names(seqlist), "-")
       pairings <- function(z){
         obj <- list(); meta <- list()
         for (i in 1:(length(z) - 1)){
@@ -126,12 +136,22 @@ polenta <- function(seqs, gt, k = 200, bootstrap = 100,
         attr(obj, "vertices") <- meta
         obj
       }
-      while (length(seqs) > 1){
+      # seqs2 <- seqlist
+      while (length(seqlist) > 1){
         p <- pairings(vertex.set)
-        seqs <- lapply(p, transitivityMerge, x = seqs)
+        seqlist <- lapply(p, transitivityMerge, x = seqlist, exec = exec)
         vertex.set <- attr(p, "vertices")
       }
-      seqs <- seqs[[1]]
+      seqlist <- seqlist[[1]]
+      
+      # seqs : MSAs with scores
+      # seqs2 : merged MSA
+      
+      ## reappend scores to merged alignments
+      ## ------------------------------------
+    
+      seqs <- reappendScores_gen_dev(v = seqs, s = seqlist)
+      
       
       ## next steps
       ## - put pairing() in its on file
